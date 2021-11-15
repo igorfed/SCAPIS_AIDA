@@ -27,7 +27,8 @@ tensorflow~=1.15.0
 tensorflow-gpu~=1.15.0
 scipy~=1.1.0
 six~=1.16.0
-pillow~=8.4.0**
+pillow~=8.4.0
+
 #Requirenments 
 #Data structure
 ![](img/BlankDiagram.png)
