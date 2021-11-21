@@ -1,16 +1,22 @@
 
 ###Disclaimer
 >This is an internal manual:<br>
->compiled with compiled with utmost фееутешщт, the content, imagery, requirenments and user interface given may be misleading, incomplete, or might change.
+> all content, imagery, requirenments and user interface given may be misleading, incomplete, or might change.
 
 # Overwiev
-This is a research environment tool with help to prepare large amount of medical data to train, run and generate annonimized medical images using well known
+This is a research environment tool which is simplified user-level for prepare large amount of medical data to train, run and generate annonimized medical images using well known
 [Generative Adversarial Networks](https://github.com/tkarras/progressive_growing_of_gans). <br>
+It is implemented ib **Python** and has a operating system independent layer that allows it to run, potentially, on any OS.<br>
+**The main solving tasks:**<br>
+* Establish a generic and efficient console platform with possibility to run in Linux terminal to prepare, analyse and generate image data from SCAPIS (and others selected datasets);<br>
+* Provide a basic knowledge of medical images, load convert and process them to train anonymized images;<br>
+* The work package includes the source datasets processing which meets the requirenments for use on SCAPIS data and implemnent aftewards the metod in robust engine in SCAPISE AI platform.<br>
 
-The main solving tasks:<br>
-* Establish a generic and efficient console platform with possibility to run in Linux terminal to prepare, analyse and generate image data from SCAPIS (and others selected datasets);
-* Provide a basic knowledge of medical images and load and process them to train GAN
-* The work package includes the source datasets processing which meets the requirenments for use on SCAPIS data and implemnent aftewards the metod in robust engine in SCAPISE AI platform.
+## **Table of Contents**
+2. [Introduction](doc/data.md)<br>
+3. [Requirements](doc/requirements.md)<br>
+4. [Example of running](doc/data.md)<br>
+5. [Analysing of results](doc/data.md)<br>
 
 
 #Installing / Getting started
@@ -49,7 +55,7 @@ pillow~=8.4.0<br>
 
 ##DataSet structure
 
-[]
+
 
 ![](img/BlankDiagram.png)
 
