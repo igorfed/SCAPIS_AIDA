@@ -1,40 +1,47 @@
-# Overwiev
 
-SCAPIS AIDA is the research environment tool with help to prepare large amount of medical data to train, run and generate annonimized medical images using  Generative Adversarial Networks.<br>
-The main solving task:<br>
-* Establish a generic and work-efficient console platform to prepare, analyse and generate image data from SCAPIS (and others selected datasets)
+###Disclaimer
+>This is an internal manual:<br>
+>compiled with compiled with utmost фееутешщт, the content, imagery, requirenments and user interface given may be misleading, incomplete, or might change.
+
+# Overwiev
+This is a research environment tool with help to prepare large amount of medical data to train, run and generate annonimized medical images using well known
+[Generative Adversarial Networks](https://github.com/tkarras/progressive_growing_of_gans). <br>
+
+The main solving tasks:<br>
+* Establish a generic and efficient console platform with possibility to run in Linux terminal to prepare, analyse and generate image data from SCAPIS (and others selected datasets);
 * Provide a basic knowledge of medical images and load and process them to train GAN
 * The work package includes the source datasets processing which meets the requirenments for use on SCAPIS data and implemnent aftewards the metod in robust engine in SCAPISE AI platform.
 
 
 #Installing / Getting started
 
-## System 
+## System requirements
+- Both Linux and Windows are supported. The latest version is tested under Windows 10. But strongly recommended use OS with max CUDA<=10.1 for compatibility reasons.
+It depends on the TensorFlow version used by the authors of PCGAN.
+- Python 3.6 (64 bits) installation. To configure environment We recommend Conda.
+Additional Python packages listed in the requirements.txt located in the project folder<br>.
 ##Create an Environment 
 ```
 conda create --name SCAPIS_AIDA python=3.6
 conda info --envs
 conda activate ./SCAPIS_AIDA
 ```
-After activating an environment using its prefix, the prompt will look similar to the following:
-
 Clone project into the folder
 
-Prerequisites
+###Prerequisites
 ```
 pip install -r requirements.txt
 ```
-
-numpy~=1.19.5
-opencv-python~=4.5.4.58
-matplotlib~=3.3.4
-pydicom~=2.2.2
-pandas~=1.1.5
-tensorflow~=1.15.0
-tensorflow-gpu~=1.15.0
-scipy~=1.1.0
-six~=1.16.0
-pillow~=8.4.0
+>numpy~=1.19.5<br>
+opencv-python~=4.5.4.58<br>
+matplotlib~=3.3.4<br>
+pydicom~=2.2.2<br>
+pandas~=1.1.5<br>
+tensorflow~=1.15.0<br>
+tensorflow-gpu~=1.15.0<br>
+scipy~=1.1.0<br>
+six~=1.16.0<br>
+pillow~=8.4.0<br>
 
 ##Requirenments 
 
@@ -51,5 +58,21 @@ Normally DICOM format uses to keeping medical datasets
 
 #User Gui
 
-CSV dataset files with a labeled slices were loaded onto a dashboardand the framwork  automatically implemented supervised learning and developed optimized classifier with hyperparameters.•
+To run the programme tipe the following command:
+```
+python main.py -data_dir "D:/Scapis/SCAPIS_Processed_Data"
+```
+The `data_dir` argument is required. This is a full  
 
+----------------------------------------
+	[0]	Download DCOM images from [drli,ctpa,scapis] into the Dictionary and create JSON:
+	[1]	Save Dictionary into Numpy and CSV:
+	[2]	Load Dictionary from Numpy and CSV:
+	[3]	Plot random Slices:
+	[4]	Show slices Info:
+	[5]	Hounsfield Units (HU):
+	[6]	OpenGL show in 3D:
+	[7]	Generate Images by PCGAN:
+	[8]	Exit:
+----------------------------------------
+	Choose your option: 
