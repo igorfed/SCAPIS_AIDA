@@ -31,9 +31,10 @@ So,  we used *pidicom* module for working with DICOM to prepare a script that co
 | **[SCAPIS]()** | This is a medical dataset from Göteborg university.  |25 patient with 10657 slices  | ?????|
 
 ### Preview
-The above data should be organized in the following order:
-![](/img/BlankDiagram.png)
-In the future, when expanding the functionality, the obtained data must be unzipped in the order shown in the figure above.
+The above data are organized in the following order:
+![](../img/BlankDiagram.png)
+
+In the future, when expanding the functionality, the new obtained medical datasets must be unzipped in the order shown in the figure above.
 
 
 

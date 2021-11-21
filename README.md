@@ -12,28 +12,6 @@ It is implemented ib **Python** and has operating system independent layer that 
 ## **Table of Contents**
 2. [Introduction](doc/data.md)<br>
 3. [Requirements](doc/requirements.md)<br>
-4. [Example of running](doc/data.md)<br>
-5. [Analysing of results](doc/data.md)<br>
+4. [Getting Started](doc/gui.md)<br>
+5. [Discussed options](doc/formulating_options.md)<br>
 
-#Installing / Getting started
-
-#User Gui
-
-To run the programme tipe the following command:
-```
-python main.py -data_dir "D:/Scapis/SCAPIS_Processed_Data"
-```
-The `data_dir` argument is required. This is a full  
-
-----------------------------------------
-	[0]	Download DCOM images from [drli,ctpa,scapis] into the Dictionary and create JSON:
-	[1]	Save Dictionary into Numpy and CSV:
-	[2]	Load Dictionary from Numpy and CSV:
-	[3]	Plot random Slices:
-	[4]	Show slices Info:
-	[5]	Hounsfield Units (HU):
-	[6]	OpenGL show in 3D:
-	[7]	Generate Images by PCGAN:
-	[8]	Exit:
-----------------------------------------
-	Choose your option: 

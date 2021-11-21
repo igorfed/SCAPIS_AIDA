@@ -459,7 +459,7 @@ class PATIENTS:
 
                     ax.imshow(self.slices[r], cmap='gray')
                     ax.set_aspect('equal')
-                plt.savefig('Customed Plot.pdf')
+                plt.savefig('Customed_Plot.pdf')
                 #plt.subplots_adjust(wspace=1, hspace=1)
             else:
                 pass
