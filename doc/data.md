@@ -19,7 +19,7 @@ Files can also include one image, or multiple (slice), or multiple slices. The d
 - DICOM is not the only file format used in medicine. Maintaining all of these scenarios would be an overwhelming task for our team. The process of developing new features in the platform is based on what our users / AI developers need in the first place.<br>
 
 Here prepared a small, "quick" solution to the problem of DICOM files markup in the platform.
-So, we used *pidicom* module for working with DICOM to prepare a script that converts DICOM files into ordinary images and writes to a binary format with subsequent annotations and the possibility of reverse recovery.
+So,  we used *pidicom* module for working with DICOM to prepare a script that converts DICOM files into ordinary images and writes to a binary format with subsequent annotations and the possibility of reverse recovery.
 
 
 ## What’s included as an available datasets:
@@ -31,8 +31,10 @@ So, we used *pidicom* module for working with DICOM to prepare a script that con
 | **[SCAPIS]()** | This is a medical dataset from Göteborg university.  |25 patient with 10657 slices  | ?????|
 
 ### Preview
-
+The above data should be organized in the following order:
 ![](/img/BlankDiagram.png)
+In the future, when expanding the functionality, the obtained data must be unzipped in the order shown in the figure above.
+
 
 
 
