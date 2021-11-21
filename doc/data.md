@@ -22,6 +22,18 @@ Here prepared a small, "quick" solution to the problem of DICOM files markup in 
 So, we used *pidicom* module for working with DICOM to prepare a script that converts DICOM files into ordinary images and writes to a binary format with subsequent annotations and the possibility of reverse recovery.
 
 
+## What’s included as an available datasets:
+
+| What | Description | Patients/ Slices| Copy rights|
+| ------- | ------- | ------- |------- |
+| **[CTPI - Computed Tomography Pulmonary Angiography data](https://datahub.aida.scilifelab.se/10.23698/aida/ctpa)** | This is a train and testing dataset consisted of image of Lung CT from different patients.<br> |30 patients 29827 slises|2019 Uppsala University, Tobias Sjöblom, Nyköpings Lasarett, Tomas Fröding |
+| **[DRLI - Liver data from the Visual Sweden project DROID](https://datahub.aida.scilifelab.se/10.23698/aida/drli)** | This is a clinical examinations showed CT liver malignancies. Manual oncological annotations were made by a radiologist and these were controlled by a second experienced radiologist. All changes with a diameter greater than 5mm were segmented and assumed metastases  |76 patients 29827 slises|2019 Linköping University, Anders Persson|
+| **[SCAPIS]()** | This is a medical dataset from Göteborg university.  |25 patient with 10657 slices  | ?????|
+
+### Preview
+
+![](/img/BlankDiagram.png)
+
 
 
 

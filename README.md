@@ -57,8 +57,6 @@ pillow~=8.4.0<br>
 
 
 
-![](img/BlankDiagram.png)
-
 #Dicom images
 Normally DICOM format uses to keeping medical datasets 
 
