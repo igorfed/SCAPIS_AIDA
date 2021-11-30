@@ -9,11 +9,14 @@ __version__ = "1.0.1"
 
 from pars.parser import ARG_PARSE
 from com.patient import PATIENTS
-from com.menu import MENU
+#from com.menu import MENU
+from com.console_menu import MENU
 
 def dcom_proc(args):
     __pnt = PATIENTS(data_dir=args.data_dir, dataset=args.dataset)
     return __pnt
+
+
 
 
 def main(args):

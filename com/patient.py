@@ -4,21 +4,24 @@ import cv2
 import os
 from com.color import COLOR
 import json
+import matplotlib
+matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
 import pydicom
 import pandas as pd
 from com.dcom import BYTE
 from com.dcom import DCM, DCM_TAG
-from com.dcom import TAGS, TAGS_DICT
+from com.dcom import TAGS
 import csv
 import time
 import shutil
 
-from collections import OrderedDict
+#from collections import OrderedDict
 
 timestr = time.strftime("_%Y%m%d_%H%M%S")
 
-from matplotlib.widgets import Button
+#from matplotlib.widgets import Button
 
 
 def file_existed(filename):
@@ -171,14 +174,14 @@ class PATIENTS:
             numpy_dir = "np"
             if not os.path.exists(os.path.join(self.script_dir, numpy_dir)):
                 os.makedirs(numpy_dir)
-            name = os.path.join(os.path.join(self.script_dir, numpy_dir, s + '.npy'))
+            #name = os.path.join(os.path.join(self.script_dir, numpy_dir, s + '.npy'))
             np_name = os.path.join(os.path.join(self.script_dir, numpy_dir, dataset + '.npy'))
-            if not file_existed(name):
-                with open(name, 'wb') as f:
+            if not file_existed(np_name):
+                with open(np_name, 'wb') as f:
                     np.save(f, data)
-                shutil.copy(name, np_name)
+                #shutil.copy(name, np_name)
                 f.close()
-            print("NP Done", name)
+            print("NP Done", np_name)
 
         def csv_file_writer(dataset, dict):
             print(COLOR.Blue + ' Dict to CSV...' + COLOR.END)
@@ -186,19 +189,19 @@ class PATIENTS:
             csv_dir = "csv"
             if not os.path.exists(os.path.join(self.script_dir, csv_dir)):
                 os.makedirs(csv_dir)
-            csv_name_patient = os.path.join(os.path.join(self.script_dir, csv_dir, s + '.csv'))
-
-            print(csv_name_patient)
+            #csv_name_patient = os.path.join(os.path.join(self.script_dir, csv_dir, s + '.csv'))
+            csv_name = os.path.join(os.path.join(self.script_dir, csv_dir, dataset + '.csv'))
+            print(csv_name)
             #print(dict.keys())
-            with open(csv_name_patient, 'w', newline="") as csv_file_patient:
+            with open(csv_name, 'w', newline="") as csv_file_patient:
                 w = csv.writer(csv_file_patient, delimiter=',')
                 w.writerow(dict.keys())
                 w.writerows(zip(*dict.values()))
                 #w.writerows(zip(*dict.values()))
-            csv_name = os.path.join(os.path.join(self.script_dir, csv_dir, dataset + '.csv'))
-            shutil.copy(csv_name_patient, csv_name)
+            #csv_name = os.path.join(os.path.join(self.script_dir, csv_dir, dataset + '.csv'))
+            #shutil.copy(csv_name_patient, csv_name)
             csv_file_patient.close()
-            print("CSV Done", csv_name_patient)
+            print("CSV Done", csv_name)
 
         print(COLOR.Blue + ' Pars dict...' + COLOR.END)
         __bt = BYTE()
@@ -206,7 +209,7 @@ class PATIENTS:
         TAGS.CTPI = []
 
         TAGS.dict_CSV = {}
-        TAGS_DICT = {}
+
         print(len(self.patient_slices))
         for i in range(len(self.patient_slices)):
             P = []
@@ -298,33 +301,19 @@ class PATIENTS:
         print("\tDict:", 'Patients:', CTPI_Image.ndim, 'Shape:', CTPI_Image.shape, "Num of Slices:", len(CTPI_Image))
         print("-" * 40)
         np_file_writer(self.dataset, CTPI_Image)
-        #print(COLOR.Green + "Numpy done" + COLOR.END)
-        #print('1. TAGS.StudyID', TAGS.StudyID)
         TAGS.dict_CSV["StudyID"] = TAGS.StudyID
-        #print('1. TAGS.Patient', TAGS.Patient)
         TAGS.dict_CSV["Patient"] = TAGS.Patient
-        #print('1. TAGS.Image', TAGS.Image)
         TAGS.dict_CSV["Image"] = TAGS.Image
-        #print('1. TAGS.Slices', TAGS.Slices)
         TAGS.dict_CSV["Slices"] = TAGS.Slices
-        #print('1. TAGS.Exposure', TAGS.Exposure)
         TAGS.dict_CSV["Exposure"] = TAGS.Exposure
-        #print('1. TAGS.Rows', TAGS.Rows)
         TAGS.dict_CSV["Rows"] = TAGS.Rows
-        #print('1. TAGS.Columns', TAGS.Columns)
         TAGS.dict_CSV["Columns"] = TAGS.Columns
-        #print('1. TAGS..Pixel_Spacing', TAGS.Pixel_Spacing)
         TAGS.dict_CSV["Pixel_Spacing"] = TAGS.Pixel_Spacing
-        #print('1. TAGS.Instance_Number', TAGS.Instance_Number)
         TAGS.dict_CSV["Instance_Number"] = TAGS.Instance_Number
-        #print('1. TAGS.Acquisition_Number', TAGS.Acquisition_Number)
         TAGS.dict_CSV["Acquisition_Number"] = TAGS.Acquisition_Number
-        #print('1. TAGS.SliceLocation', TAGS.SliceLocation)
         TAGS.dict_CSV["SliceLocation"] = TAGS.SliceLocation
-        #print('1. TAGS.Body_Part', TAGS.Body_Part)
         TAGS.dict_CSV["Body_Part"] = TAGS.Body_Part
         self.dict_CSV = TAGS.dict_CSV
-
         csv_file_writer(self.dataset, TAGS.dict_CSV)
 
     def coll_dict(self, dataset):
@@ -377,34 +366,6 @@ class PATIENTS:
         self.slices = []
         self.slices = np_file_reader(srcipt_dir=self.script_dir, dataset=dataset, data=self.slices)
 
-
-        #       w = csv.writer(csv_file_patient, delimiter=',')
-         #       w.writerow(dict.keys())
-         #       w.writerows(zip(*dict.values()))
-         #   csv_name = os.path.join(os.path.join(self.script_dir, csv_dir, dataset + '.csv'))
-         #   shutil.copy(csv_name_patient, csv_name)
-         #   csv_file_patient.close()
-         #   print("CSV Done", csv_name_patient)
-
-        #for item in self.patient_slices[0][2][0]:
-            # print(item.keyword)
-        #    if item.keyword not in tags_in_files:
-        #        group = "0x%04x" % item.tag.group
-        #        element = "0x%04x" % item.tag.element
-        #        tags_in_files[item.keyword] = group, element, item.keyword, item.name
-        # sort the tags
-
-
-        #tags_in_files = OrderedDict(sorted(tags_in_files.items(), key=(lambda k: (k[1][0], k[1][1]))))
-        # write out the file
-        #with open('csv/tags_scapis.csv', "w") as f:
-        #    writer = csv.writer(f)
-        #    writer.writerow(["group", "element", "keyword", "name"])
-        #    for item in tags_in_files:
-        #        writer.writerow(tags_in_files[item])
-
-        #print(tags_in_files)
-
     def dir_existed(self, dir_name):
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
@@ -426,49 +387,50 @@ class PATIENTS:
         self.NumP = self.slices_size()
         return False, True
 
+
+
     def slice_plot(self, fig_title, Random):
+        def figure_save(dataset):
+            print(COLOR.Blue + ' Safe figure...' + COLOR.END)
+            s = dataset + timestr
+            figure_dir = "figure"
+            if not os.path.exists(os.path.join(self.script_dir, figure_dir)):
+                os.makedirs(figure_dir)
+            figure_fname = os.path.join(os.path.join(self.script_dir, figure_dir, s + '.pdf'))
+            return figure_fname
+
 
         if self.slices ==[]:
             print(COLOR.Red + "Patient list is empty or corrupted"+COLOR.END)
             return
         else:
             print("\tDict:", 'Patients:', self.slices.ndim, 'Shape:', self.slices.shape, "Num of Slices:")
-            w = self.slices.shape[1]
-            h = self.slices.shape[2]
+            #w = self.slices.shape[1]
+            #h = self.slices.shape[2]
             fig = plt.figure(fig_title, figsize=(30, 20), dpi=80)
-            #fig.suptitle("Rando)
-            #plt.subplots_adjust(left=0.1, bottom=0.3)
             if Random:
                 for num in range(20):
                     r = random.randint(0, len(self.slices))
                     ax = fig.add_subplot(4, 5, num + 1)
                     s = r, " Slice: " + str(self.dict_CSV["SliceLocation"][r])
                     ax.set_title(s, fontsize=10, color='red')
-                    #new_img = cv2.resize(np.array(self.patient_slices[0][0][r].pixel_array), (int(w), int(h)))
                     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
                     textstr = '\n'.join((
                         r'$Patient= %s$' % (self.dict_CSV["StudyID"][r],),
                         r'$BodyPart= %s$' % (self.dict_CSV["Body_Part"][r],),
                         r'$InstNumber= %d$' % (self.dict_CSV["Instance_Number"][r],),
                         r'Exposure= %f[mAsec]$' % (self.dict_CSV["Exposure"][r],),
-                        #r'$Intersect= %d$' % (self.patient_slices[0][0][r].RescaleIntercept,),
-                        #r'$Slope= %d$' % (self.patient_slices[0][0][r].RescaleSlope,),
                         r'$Slice= %s$' % (self.dict_CSV["SliceLocation"][r])))
                     ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=8,
                             verticalalignment='top', bbox=props)
 
                     ax.imshow(self.slices[r], cmap='gray')
                     ax.set_aspect('equal')
-                plt.savefig('Customed_Plot.pdf')
-                #plt.subplots_adjust(wspace=1, hspace=1)
+                self.dir_existed(dir_name="figure")
+                plt.savefig(figure_save(self.dataset))
+
             else:
                 pass
-
-            # axbtn = plt.axes([0.1, 0.1, 0.1, 0.1])
-            # btn1 = Button(axbtn, label="Home", color='pink', hovercolor='tomato')
-
-            # plot_random_slices(self.patient_slices)
-
-            plt.show()
+            #plt.show()
 
 
