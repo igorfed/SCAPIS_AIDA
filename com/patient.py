@@ -367,6 +367,7 @@ class PATIENTS:
         self.slices = np_file_reader(srcipt_dir=self.script_dir, dataset=dataset, data=self.slices)
 
     def dir_existed(self, dir_name):
+
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
             print(COLOR.Red + "Directory " + dir_name + " created" + COLOR.END)
