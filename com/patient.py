@@ -388,8 +388,6 @@ class PATIENTS:
         self.NumP = self.slices_size()
         return False, True
 
-
-
     def slice_plot(self, fig_title, Random):
         def figure_save(dataset):
             print(COLOR.Blue + ' Safe figure...' + COLOR.END)
