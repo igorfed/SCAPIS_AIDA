@@ -1,10 +1,31 @@
 ## Quick Sart
 
+
 The first working implementation of the tool is possible just naive command line, reading parameters from some parameters script file or directly from the command line.
+```
+python main.py -h 
+```
+    usage: main.py [-h] [-data_dir DATA_DIR] [-dataset DATASET] [-im_dir IM_DIR]
+               [-ex_dir EX_DIR] [-res RES]
+
+    Scapis. This is an updatable software platform to integrate pseudo anonymized
+    data and run sellected GAN to generate anonimized medical images
+
+    optional arguments:
+    -h,                     --help      show this help message and exit
+    -data_dir   DATA_DIR,   --data_dir  DATA_DIR
+                                        Path to pseudoanonimized dataset
+    -dataset    DATASET,    --dataset   DATASET
+                                        Type of the dataset (drli / ctpi / scapis )
+    -im_dir     IM_DIR,     --im_dir    IM_DIR
+                                        Import directory
+    -ex_dir     EX_DIR,     --ex_dir    EX_DIR
+                                        Export directory
+    -res        RES,        --res RES   Resolution
 
 >ATTENTION. The final interface will have changes depending on the accumulated experience of users, recommendations and additional functionality.
 ```
-python main.py -data_dir "D:/Scapis/SCAPIS_Processed_Data" - data_set ctpi 
+python main.py -data_dir "D:/Scapis/SCAPIS_Processed_Data"  
 ```
 ### Load Data
 The first argument **data_dir** is the root directory with the source files. The second **ctpi** is the name of data with which plan to work. 
