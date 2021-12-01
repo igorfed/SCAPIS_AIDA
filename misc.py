@@ -8,11 +8,10 @@
 import os
 import sys
 import glob
-import datetime
 import pickle
 import re
 import numpy as np
-from collections import OrderedDict 
+from collections import OrderedDict
 import scipy.ndimage
 import PIL.Image
 
@@ -91,7 +90,7 @@ class OutputLogger(object):
         self.buffer = ''
 
     def set_log_file(self, filename, mode='wt'):
-        assert self.file is None
+        #assert self.file is None
         self.file = open(filename, mode)
         if self.buffer is not None:
             self.file.write(self.buffer)
@@ -99,19 +98,21 @@ class OutputLogger(object):
 
     def write(self, data):
         if self.file is not None:
+
             self.file.write(data)
         if self.buffer is not None:
             self.buffer += data
 
     def flush(self):
         if self.file is not None:
+
             self.file.flush()
 
 class TeeOutputStream(object):
     def __init__(self, child_streams, autoflush=False):
         self.child_streams = child_streams
         self.autoflush = autoflush
- 
+
     def write(self, data):
         for stream in self.child_streams:
             stream.write(data)
@@ -133,7 +134,9 @@ def init_output_logging():
 
     print('init+output logger---------------------------------------------------------', output_logger, sys.stdout)
 def set_output_log_file(filename, mode='wt'):
+    print(output_logger)
     if output_logger is not None:
+        print('filename', filename, mode)
         output_logger.set_log_file(filename, mode)
 
 #----------------------------------------------------------------------------
@@ -145,6 +148,7 @@ def create_result_subdir(result_dir, desc):
     while True:
         run_id = 0
         for fname in glob.glob(os.path.join(result_dir, '*')):
+            print('faneme', fname)
             try:
                 fbase = os.path.basename(fname)
                 ford = int(fbase[:fbase.find('-')])
@@ -153,6 +157,7 @@ def create_result_subdir(result_dir, desc):
                 pass
 
         result_subdir = os.path.join(result_dir, '%03d-%s' % (run_id, desc))
+        print('result_subdir', result_subdir)
         try:
             os.makedirs(result_subdir)
             break
@@ -161,14 +166,18 @@ def create_result_subdir(result_dir, desc):
                 continue
             raise
 
-    print("Saving results to", result_subdir)
-    set_output_log_file(os.path.join(result_subdir, 'log.txt'))
+    print("Saving results to", os.path.join(result_subdir, 'log.txt'))
 
+    set_output_log_file(os.path.join(result_subdir, 'log.txt'))
+    print(os.path.join(result_subdir, 'config.txt'))
     # Export config.
     try:
+        #print(os.path.join(result_subdir, 'config.txt'))
         with open(os.path.join(result_subdir, 'config.txt'), 'wt') as fout:
             for k, v in sorted(config.__dict__.items()):
+
                 if not k.startswith('_'):
+                    print(k, v)
                     fout.write("%s = %s\n" % (k, str(v)))
     except:
         pass
