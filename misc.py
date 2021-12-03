@@ -14,10 +14,10 @@ import numpy as np
 from collections import OrderedDict
 import scipy.ndimage
 import PIL.Image
-
 import config
 import dataset
 import legacy
+
 
 #----------------------------------------------------------------------------
 # Convenience wrappers for pickle that are able to load data produced by

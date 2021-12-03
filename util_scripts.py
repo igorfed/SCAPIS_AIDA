@@ -9,7 +9,6 @@ import os
 import time
 import re
 import bisect
-from collections import OrderedDict
 import numpy as np
 import tensorflow as tf
 import scipy.ndimage
@@ -18,8 +17,10 @@ import scipy.misc
 import config
 import misc
 import tfutil
-import train
-import dataset
+
+
+#import train
+#import dataset
 
 #----------------------------------------------------------------------------
 # Generate random images or image grids using a previously trained network.
@@ -46,7 +47,7 @@ def generate_fake_images(run_id, snapshot=None, grid_size=[1,1], num_pngs=1, ima
         latents = misc.random_latents(np.prod(grid_size), Gs, random_state=random_state)
         labels = np.zeros([latents.shape[0], dim], np.float32)
         images = Gs.run(latents, labels, minibatch_size=minibatch_size, num_gpus=config.num_gpus, out_mul=127.5, out_add=127.5, out_shrink=image_shrink, out_dtype=np.uint8)
-        misc.save_image_grid(images, os.path.join(result_subdir, '%s%06d.png' % (png_prefix, png_idx)), [0,255], grid_size)
+        misc.save_image_grid(images, os.path.join(result_subdir, '%s%06d.png' % (png_prefix, png_idx)), [0, 255], grid_size)
     open(os.path.join(result_subdir, '_done.txt'), 'wt').close()
 
 #----------------------------------------------------------------------------
@@ -128,9 +129,9 @@ def generate_training_video(run_id, duration_sec=20.0, time_warp=1.5, mp4=None, 
             while img.shape[1] > 1920 or img.shape[0] > 1080:
                 img = img.astype(np.float32).reshape(img.shape[0]//2, 2, img.shape[1]//2, 2, -1).mean(axis=(1,3))
             png_cache[:] = [png, img]
-        img = misc.draw_text_label(img, 'lod %.2f' % lod, 16, img.shape[0]-4, alignx=0.0, aligny=1.0)
-        img = misc.draw_text_label(img, misc.format_time(int(np.rint(wallclock))), img.shape[1]//2, img.shape[0]-4, alignx=0.5, aligny=1.0)
-        img = misc.draw_text_label(img, '%.0f kimg' % kimg, img.shape[1]-16, img.shape[0]-4, alignx=1.0, aligny=1.0)
+        img = misc.draw_text_label(img, 'lod %.2f' % lod, 16, img.shape[0] - 4, alignx=0.0, aligny=1.0)
+        img = misc.draw_text_label(img, misc.format_time(int(np.rint(wallclock))), img.shape[1] // 2, img.shape[0] - 4, alignx=0.5, aligny=1.0)
+        img = misc.draw_text_label(img, '%.0f kimg' % kimg, img.shape[1] - 16, img.shape[0] - 4, alignx=1.0, aligny=1.0)
         return img
 
     # Generate video.

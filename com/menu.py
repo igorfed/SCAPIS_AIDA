@@ -2,7 +2,7 @@ from com.color import COLOR
 from collections import namedtuple
 #from SCAPIS_AIDA.com.patient import PATIENTS
 import misc
-import  config
+import config
 import  tfutil
 
 

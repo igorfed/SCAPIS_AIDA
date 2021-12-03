@@ -15,9 +15,9 @@ import traceback
 import numpy as np
 import tensorflow as tf
 import PIL.Image
-
 import tfutil
 import dataset
+
 
 #----------------------------------------------------------------------------
 

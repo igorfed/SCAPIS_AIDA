@@ -1,24 +1,24 @@
 import os
-import msvcrt
 from com.color import COLOR
 from collections import namedtuple
-import misc
-import  config
-import  tfutil
-import  train
 
-
-import numpy as np
+import train as train
 
 
 class MENU:
-    def __init__(self, args):
+    def __init__(self, pnt, args):
+
         Option = namedtuple('Option', 'label')
         # s = ','.join(STR)
         self.command = {0: Option("Pseudonymization"),
                         1: Option("Generate Pseudonymized data"),
                         2: Option("Exit")}
-        self.__pnt = args
+        self.__pnt = pnt
+
+        __args = self.args(args)
+
+        if __args.input:
+            print(__args.input)
         self.nested_command = {
             0: Option("Import Data"),
             1: Option("Export Pseudonymized Data ->"),
@@ -29,6 +29,12 @@ class MENU:
             0: Option("Generate Pseudonymized data"),
             1: Option("Sample Plot"),
             2: Option("Back")}
+
+    def args(self, args):
+        self.input = args.input
+        self.dataset = args.dataset
+        self.plot = args.plot
+        self.resolution = args.resolution
 
     @staticmethod
     def user(option_size):
@@ -71,7 +77,8 @@ class MENU:
             return self.ask_user_to_exit()
 
     def ask_user_to_rescale(self):
-        rescale = input(COLOR.Green + "\tDo you want to RESCALE source images? Choose- [64, 128, 256], If not, press ENTER, or [Q] to exit" + COLOR.END)
+        rescale = input(
+            COLOR.Green + "\tDo you want to RESCALE source images? Choose- [64, 128, 256], If not, press ENTER, or [Q] to exit" + COLOR.END)
         if rescale == "":
             return 512
         elif rescale.strip().isdigit():
@@ -84,7 +91,7 @@ class MENU:
             else:
                 print(COLOR.Red + '\tInvalid Input. Choose again' + COLOR.END)
                 return self.ask_user_to_rescale()
-        elif rescale=='q' or rescale=='Q':
+        elif rescale == 'q' or rescale == 'Q':
             return False
         else:
             print(COLOR.Red + "\tPlease enter valid inputs" + COLOR.END)
@@ -108,9 +115,9 @@ class MENU:
             return False
         s = ','.join(STR)
         if len(STR) == 1:
-            s =  "\tDo you want to load [" + s + "] ? Choose- [0], Or press [Q] to exit: "
+            s = "\tDo you want to load [" + s + "] ? Choose- [0], Or press [Q] to exit: "
         else:
-            s = "\tDo you want to load [" + s + "] ? Choose- [0..{}], , Or press [Q] to exit: ".format(len(STR)-1)
+            s = "\tDo you want to load [" + s + "] ? Choose- [0..{}], , Or press [Q] to exit: ".format(len(STR) - 1)
         check = (input(COLOR.Green + s + COLOR.END))
         if check.strip().isdigit():
             try:
@@ -127,24 +134,23 @@ class MENU:
                 print(COLOR.Red + "\tPlease enter valid inputs" + COLOR.END)
                 print(error)
             return self.ask_user_to_chose_dataset()
-        elif check=='q' or check=='Q':
+        elif check == 'q' or check == 'Q':
             return False
         else:
             print(COLOR.Red + '\tInvalid Input. Chose again' + COLOR.END)
             return self.ask_user_to_chose_dataset()
 
-
     def ask_user2generateNumber(self, N):
         while True:
 
-            numImages = input(COLOR.Green + "\t\tEnter number of images to generate in range [0,..., {}]: ".format(1000 - 1) + COLOR.END)
+            numImages = input(COLOR.Green + "\t\tEnter number of images to generate in range [0,..., {}]: ".format(
+                1000 - 1) + COLOR.END)
 
             if numImages.isdigit() and (int(numImages) >= 0 and int(numImages) < N):
 
                 return int(numImages)
             else:
                 print(COLOR.Red + "\t\t\tSelected number {} is not supported".format(int(numImages)) + COLOR.END)
-
 
     def print_menu(self, user_choice):
         print("-" * 40)
@@ -168,20 +174,19 @@ class MENU:
             for option in sorted(self.nested_command_1.keys()):
                 print(COLOR.Blue + "\t\t[{0}]\t{1}".format(option, self.nested_command_1[option].label) + COLOR.END)
 
-
     def ask_user_to_chose_import_dataset(self):
         [print(f.path) for f in os.scandir('np') if f.is_file()]
-        STR = [os.path.basename(f.path.replace("\\", "/")).split('.')[0]  for f in os.scandir('np') if f.is_file()]
-        #os.path.basename(f.path.replace("\\", "/"))
+        STR = [os.path.basename(f.path.replace("\\", "/")).split('.')[0] for f in os.scandir('np') if f.is_file()]
+        # os.path.basename(f.path.replace("\\", "/"))
         print(STR)
         if not STR:
             print(COLOR.Red + "\tImport Data not found in folder:\t" + self.__pnt.data_dir + COLOR.END)
             return False
         s = ','.join(STR)
         if len(STR) == 1:
-            s =  "\tDo you want to load [" + s + "] ? Choose- [0], Or press [Q] to exit:"
+            s = "\tDo you want to load [" + s + "] ? Choose- [0], Or press [Q] to exit:"
         else:
-            s = "\tDo you want to load [" + s + "] ? Choose- [0..{}], Or press [Q] to exit:".format(len(STR)-1)
+            s = "\tDo you want to load [" + s + "] ? Choose- [0..{}], Or press [Q] to exit:".format(len(STR) - 1)
         check = (input(COLOR.Green + s + COLOR.END))
         if check.strip().isdigit():
             try:
@@ -198,7 +203,7 @@ class MENU:
                 print(COLOR.Red + "\tPlease enter valid inputs" + COLOR.END)
                 print(error)
             return self.ask_user_to_chose_import_dataset()
-        elif check=='q' or check=='Q':
+        elif check == 'q' or check == 'Q':
             return False
         else:
             print(COLOR.Red + '\tInvalid Input. Chose again' + COLOR.END)
@@ -238,21 +243,21 @@ class MENU:
         else:
             pass
 
-
     def option_generate_pseudonymized_data(self):
         num = self.ask_user2generateNumber(N=1000)
+        train.main()
 
-        misc.init_output_logging()
-        np.random.seed(config.random_seed)
+    #        misc.init_output_logging()
+    #       np.random.seed(config.random_seed)
 
-        tfutil.init_tf(config.tf_config)
-        # print('Running %s()...of %s ....%s images' % (config.train['func'],config.train['run_id'], config.train['num_pngs']))
+    #      tfutil.init_tf(config.tf_config)
+    # print('Running %s()...of %s ....%s images' % (config.train['func'],config.train['run_id'], config.train['num_pngs']))
 
-        num_gpus = 1;
-        desc = 'camelyon-fake-images'
-        tfutil.call_func_by_name(
-            **config.EasyDict(func='util_scripts.generate_fake_images', run_id='camelyon', num_pngs=int(num)))
-        print('Exiting...')
+    #     num_gpus = 1;
+    #    desc = 'camelyon-fake-images'
+    #   tfutil.call_func_by_name(
+    #      **config.EasyDict(func='pcgan.util_scripts.generate_fake_images', run_id='camelyon', num_pngs=int(num)))
+    # print('Exiting...')
 
     def ui_selection(self):
 
@@ -277,7 +282,7 @@ class MENU:
                             elif j == 3:
                                 self.option_sample_plot(data_type="Pseudonymized")
                             elif j == 4:
-                                #print('Back')
+                                # print('Back')
                                 i, j = None, None
                                 break
                             else:
@@ -295,7 +300,7 @@ class MENU:
                             elif j == 1:
                                 self.option_sample_plot(data_type="Generated")
                             elif j == 2:
-                                #print('Back')
+                                # print('Back')
                                 i, j = None, None
                                 break
                             else:

@@ -37,13 +37,19 @@ def file_existed(filename):
 
 class PATIENTS:
 
-    def __init__(self, data_dir, dataset):
+    def __init__(self, args):
+        for key, value in args._get_kwargs():
+            # if value is not None:
+            print("{0} = {1}".format(key, value))
+
+        self.data_dir = args.input
+        self.dataset = args.dataset
+        self.plot = args.plot
+        self.resolution = args.resolution
         self.script_dir = os.path.dirname(os.path.realpath('__file__'))
         self.json_dir = "json"
         self.np_dir = "np"
         self.__dcm = BYTE()
-        self.data_dir= data_dir
-        self.dataset = dataset
         self.patient_slices = []
         self.slices  =[]
         self.dict_CSV = {}

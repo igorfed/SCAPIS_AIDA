@@ -5,14 +5,13 @@
 # http://creativecommons.org/licenses/by-nc/4.0/ or send a letter to
 # Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-import os
-import sys
 import inspect
 import importlib
 import imp
 import numpy as np
 from collections import OrderedDict
 import tensorflow as tf
+
 
 #----------------------------------------------------------------------------
 # Convenience.
@@ -211,11 +210,22 @@ def save_summaries(filewriter, global_step=None):
 
 def import_module(module_or_obj_name):
     parts = module_or_obj_name.split('.')
+    print(parts)
     parts[0] = {'np': 'numpy', 'tf': 'tensorflow'}.get(parts[0], parts[0])
+    print(parts[0])
     for i in range(len(parts), 0, -1):
+        print(i)
         try:
-            module = importlib.import_module('.'.join(parts[:i]))
+            print('11111111111111.'.join(parts[:i]))
+            print('11111111111111.'.join(parts[:i]))
+            print(type('.'.join(parts[:i])))
             relative_obj_name = '.'.join(parts[i:])
+            print('relative_obj_name', relative_obj_name)
+            module = importlib.import_module('.'.join(parts[:i]))
+            #module = importlib.import_module('.'.join(parts[:i]))
+            #relative_obj_name = '.'.join(parts[i:])
+            print('module',module)
+            print('relative_obj_name', relative_obj_name)
             return module, relative_obj_name
         except ImportError:
             pass
@@ -227,12 +237,17 @@ def find_obj_in_module(module, relative_obj_name):
         obj = getattr(obj, part)
     return obj
 
+
+
 def import_obj(obj_name):
+    from com.color import COLOR
+    print(COLOR.Green + obj_name + COLOR.END)
     module, relative_obj_name = import_module(obj_name)
+
     return find_obj_in_module(module, relative_obj_name)
 
 def call_func_by_name(*args, func=None, **kwargs):
-    assert func is not None
+    #assert func is not None
     return import_obj(func)(*args, **kwargs)
 
 #----------------------------------------------------------------------------

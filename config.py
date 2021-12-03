@@ -19,7 +19,7 @@ class EasyDict(dict):
 # Paths.
 
 data_dir = 'datasets'
-result_dir = 'results'
+result_dir = 'c:/temp/pcgan/results'
 
 #----------------------------------------------------------------------------
 # TensorFlow options.

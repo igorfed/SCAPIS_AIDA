@@ -2,9 +2,21 @@
 
 
 The first working implementation of the tool is possible just naive command line, reading parameters from some parameters script file or directly from the command line.
-```
-python main.py -h 
-```
+>ATTENTION. The final interface will have changes depending on the accumulated experience of users, recommendations and additional functionality.
+
+| Command | Description |
+| ------- | ----------- |
+| ```python main.py -h / --help``` | ger help of the arguments |
+| ``` python main.py -input "d:\Scapis\Data1" ``` | Run main.py with user GUI in console |
+| ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT"``` | import selected *dataset* from *data_dir* and export into the *out* folder|
+| ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -r 256``` | import selected *dataset* from *data_dir*, resize and export into the *out* folder|
+| ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -p ``` | import selected *dataset* from *data_dir* export into the *out* folder and plot random slices into pdf|
+
+
+
+1. Get help ```python main.py -h```
+
+
     usage: main.py [-h] [-data_dir DATA_DIR] [-dataset DATASET] [-im_dir IM_DIR]
                [-ex_dir EX_DIR] [-res RES]
 
@@ -23,10 +35,10 @@ python main.py -h
                                         Export directory
     -res        RES,        --res RES   Resolution
 
->ATTENTION. The final interface will have changes depending on the accumulated experience of users, recommendations and additional functionality.
-```
-python main.py -data_dir "D:/Scapis/SCAPIS_Processed_Data"  
-```
+
+
+2. Run in Console with User Menu ``` python main.py -data_dir [path to pseudoanonimized data] ```
+
 ### Load Data
 The first argument **data_dir** is the root directory with the source files. The second **ctpi** is the name of data with which plan to work. 
 
