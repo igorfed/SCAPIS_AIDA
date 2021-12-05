@@ -30,6 +30,7 @@ class ARG_PARSE():
                             "--dataset",
                             required=False,
                             type=str,
+                            default="drli",
                             help='Type of the dataset')
 
         parser.add_argument("-out",
@@ -38,12 +39,13 @@ class ARG_PARSE():
                             type=str,
                             help='Import directory')
 
-        parser.add_argument("-r", "--resolution",
+
+        parser.add_argument("-r", "--r",
                             required=False,
                             type=int,
                             help='Setup resolution to rescale')
 
-        parser.add_argument("-plot", "--plot", required=False, help='Plot sample')
+        parser.add_argument("-plot", "--plot",  action='store_true', required=False, help='Plot sample')
 
         args = parser.parse_args()
         print(c.COLOR.Blue + "-" * 100)

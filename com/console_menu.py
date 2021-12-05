@@ -6,19 +6,21 @@ import train as train
 
 
 class MENU:
-    def __init__(self, pnt, args):
-
+    def __init__(self, __pnt, args, path):
+        self.__pnt = __pnt
+        self.path = path
         Option = namedtuple('Option', 'label')
         # s = ','.join(STR)
         self.command = {0: Option("Pseudonymization"),
                         1: Option("Generate Pseudonymized data"),
                         2: Option("Exit")}
-        self.__pnt = pnt
-
-        __args = self.args(args)
-
-        if __args.input:
-            print(__args.input)
+        self.data_dir = args.input
+        self.dataset = args.dataset
+        self.export_dir = args.out
+        self.plot = args.plot  # do you want top plot
+        self.resolution = args.r
+        print('abspath:     ', path)
+        #print('abs dirname: ', os.path.dirname(os.path.abspath(__file__)))
         self.nested_command = {
             0: Option("Import Data"),
             1: Option("Export Pseudonymized Data ->"),
@@ -34,7 +36,7 @@ class MENU:
         self.input = args.input
         self.dataset = args.dataset
         self.plot = args.plot
-        self.resolution = args.resolution
+        self.resolution = args.r
 
     @staticmethod
     def user(option_size):
@@ -225,7 +227,7 @@ class MENU:
         else:
             rescale = self.ask_user_to_rescale()
             print('\tRescale ' + str(rescale))
-            self.__pnt.numpy_writer(Rescale=rescale)
+            self.__pnt.numpy_writer(Rescale=rescale, dir_name=self.path)
 
     def option_import_pseudonymized_data(self):
         s = self.ask_user_to_chose_import_dataset()
@@ -237,7 +239,7 @@ class MENU:
 
     def option_sample_plot(self, data_type):
         if data_type == "Pseudonymized":
-            self.__pnt.slice_plot(fig_title='Random source plot', Random=True)
+            self.__pnt.slice_plot(fig_title='Random source plot', Random=True,dir_name=self.path)
         elif data_type == "Generated":
             pass
         else:

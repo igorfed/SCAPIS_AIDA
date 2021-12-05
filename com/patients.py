@@ -12,13 +12,11 @@ from com.dcom import BYTE
 from com.dcom import DCM, DCM_TAG
 from com.dcom import TAGS
 import csv
-import time
+import time, timeit
+
 matplotlib.use('Agg')
 
 timestr = time.strftime("_%Y%m%d_%H%M%S")
-
-
-# from matplotlib.widgets import Button
 
 
 def file_existed(filename):
@@ -41,52 +39,69 @@ class PATIENTS:
 
         self.data_dir = args.input
         self.dataset = args.dataset
-        self.plot = args.plot
-        self.resolution = args.resolution
+        self.export_dir = args.out
+
+
+
+        self.plot = args.plot  # do you want top plot
+        self.resolution = args.r
         self.script_dir = os.path.dirname(os.path.realpath('__file__'))
-        self.json_dir = "json"
-        self.np_dir = "np"
-        self.__dcm = BYTE()
+        self.slices = []
         self.patient_slices = []
         self.slices = []
         self.dict_CSV = {}
-        # self.list_dir2dict(data_dir, dataset)
+        self.json_dir = "json"
+        self.np_dir = "np"
+        self.__dcm = BYTE()
+        self.dict_CSV = {}
 
-    def dcom_tags(self):
-        self.TransferSyntaxUID = None
-        self.MediaStorageSOPClassUID = None
-        self.ImplementationClassUID = None
-        self.ImplementationVersionName = None
+
+        if self.export_dir is not None:
+            self.list_dir2dict(data_dir=self.data_dir, dataset = self.dataset)
+            if self.resolution is None:
+                print("\tPseudonymized data will not rescale")
+                self.numpy_writer(Rescale=512, dir_name=self.export_dir)
+            elif self.resolution in [64, 128, 256, 512]:
+                self.numpy_writer(Rescale=self.resolution, dir_name=self.export_dir)
+            else:
+                print(COLOR.Red, "ATTENTION. You entered unexpected Rescale value. Pseudoanonimized data will not rescale", COLOR.END)
+                self.numpy_writer(Rescale=512, dir_name=self.export_dir)
+            if self.plot is not None:
+                if self.plot:
+                    self.slice_plot(fig_title='Random source plot', Random=True, dir_name=self.export_dir)
 
     def list_dir2dict(self, data_dir, dataset):
+        print('data_dir', data_dir)
+        print('dataset', dataset)
 
-        self.json_filename = dataset + "_info.json"
-        self.dataset = dataset
         self.slices = []
-        self.patient_slices = []
-        self.patient_dict = {}
         self.patients = []
         self.patients_path = []
-        self.data_dir = data_dir
-        self.name_of_dataset = dataset
-        self.heador = []
-        self.keys = []
+        self.patient_slices = []
+        self.patient_dict = {}
 
         i = 0
-        print(COLOR.Blue + "\tPatient Dict start", self.data_dir, self.name_of_dataset + COLOR.END)
-        for pos, value in enumerate(os.listdir(self.data_dir)):
-            if os.listdir(self.data_dir)[pos] == self.name_of_dataset:
-                data_path = os.path.join(self.data_dir, os.listdir(self.data_dir)[pos])
-                # print(i, data_path)
+        self.json_filename = dataset + "_info.json"
+        if not os.path.exists(os.path.join(os.path.join(data_dir, dataset))):
+            print(COLOR.Red + "The data: " + dataset + " doesnt found in: " + data_dir + COLOR.Red)
+            print(COLOR.Red + '\tCheck if Data exists' + COLOR.Red)
+            quit()
+
+        print(COLOR.Blue + "\tPatient Dict start", data_dir + COLOR.END)
+        start = time.time()
+        for pos, value in enumerate(os.listdir(data_dir)):
+            if os.listdir(data_dir)[pos] == dataset:
+                data_path = os.path.join(data_dir, os.listdir(data_dir)[pos])
                 for it in os.scandir(data_path):
                     if it.is_dir():
                         self.patient_slices.append([])
                         self.patients_path.append(it.path)
                         self.patients.append(os.path.basename(it.path))
-                        print('\tPatient:', i)
+                        print(COLOR.Green + '\tPatient:', str(i) + COLOR.END)
                         self.list_subdir(patient=self.patients[-1], path=self.patients_path[-1], i=i)
                         i = i + 1
-        print(COLOR.Green + "Patient Dict done" + COLOR.END)
+        end = time.time()
+        print(COLOR.Green + "Patient Dict done", str(round((end - start), 2)) + '[sec]' + COLOR.END)
         self.dict_to_json()
         self.patient_slices_print()
 
@@ -119,6 +134,13 @@ class PATIENTS:
             self.patient_dict[i]["image"][J] = l
             self.patient_slices[i].append([pydicom.dcmread(self.patients_path[-1] + '/' + s) for s in l])
 
+    def dict_to_json(self):
+        json_name = os.path.join(os.path.join(self.script_dir, self.json_dir, self.json_filename))
+        self.dir_existed(self.json_dir)
+        with open(json_name, 'w') as f:
+            json.dump(self.patient_dict, f, indent=4)
+        self.file_existed(json_name)
+
     def patient_slices_print(self):
         print(COLOR.Blue + "Patient Dict check start" + COLOR.END)
         for i in range(len(self.patient_slices)):
@@ -128,36 +150,28 @@ class PATIENTS:
                 print("Patient size", len(self.patient_slices), "Patient", i, "Image", j, 'getSlices', getSlices)
         print(COLOR.Green + "Patient Dict check done" + COLOR.END)
 
-    def slices_size(self):
-        self.NumP = len(self.slices)
-        return self.NumP
+    def dir_existed(self, dir_name):
 
-    def dict_to_numpy(self):
-        # Save loaded images in npy format
-        print(COLOR.Red + 'Dict to numpy array' + COLOR.END)
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+            print(COLOR.Red + "Directory " + dir_name + " created" + COLOR.END)
+        else:
+            print(COLOR.Blue + "Directory " + dir_name + " already created" + COLOR.END)
 
-        self.dir_existed(self.np_dir)
+    def file_existed(self, filename):
+        try:
+            f = open(filename)
+            print(COLOR.Green + filename + " created at " + COLOR.END + time.ctime(os.path.getctime(filename)))
+            f.close()
+            return 1
+        except IOError:
+            print(COLOR.Red + "File not accessible" + COLOR.END)
+            return 0
 
-        for i in range(len(self.slices)):
-            for j in range(len(self.slices[i])):
-                if len(self.slices[i][j]) > 1:
-                    s = self.dataset + f'_{i:03d}' + f'_{j:03d}' + '.npy'
-                    np_name = os.path.join(os.path.join(self.script_dir, self.np_dir, s))
-                    if not self.file_existed(np_name):
-                        image = np.stack([s.pixel_array for s in self.slices[i][j]])
+    def numpy_writer(self, Rescale, dir_name):
 
-                        with open(np_name, 'wb') as f:
-                            np.save(f, image)
-                    print(np_name)
+        self.dir_existed(dir_name=dir_name)
 
-    def dict_to_json(self):
-        json_name = os.path.join(os.path.join(self.script_dir, self.json_dir, self.json_filename))
-        self.dir_existed(self.json_dir)
-        with open(json_name, 'w') as f:
-            json.dump(self.patient_dict, f, indent=4)
-        self.file_existed(json_name)
-
-    def numpy_writer(self, Rescale):
         def dcm_value(slices, i, j, k):
             keys, value = [], []
             for key in slices[i][j][k].file_meta.keys():
@@ -169,51 +183,45 @@ class PATIENTS:
             return keys, value
 
         def dcm_scale_down(slices, scale):
+
             return cv2.resize(np.array(slices), (scale, scale), interpolation=cv2.INTER_AREA)
 
-        def np_file_writer(dataset, data):
+        def np_file_writer(export_dir, dataset, data):
+
             print(COLOR.Blue + ' Dict to numpy array...' + COLOR.END)
-            s = dataset + timestr
             numpy_dir = "np"
-            if not os.path.exists(os.path.join(self.script_dir, numpy_dir)):
-                os.makedirs(numpy_dir)
-            # name = os.path.join(os.path.join(self.script_dir, numpy_dir, s + '.npy'))
-            np_name = os.path.join(os.path.join(self.script_dir, numpy_dir, dataset + '.npy'))
+            f = os.path.join(export_dir, numpy_dir).replace("\\", "/")
+            print(f)
+
+            if not os.path.exists(os.path.join(export_dir, numpy_dir)):
+                os.makedirs(os.path.join(export_dir, numpy_dir))
+
+            np_name = os.path.join(os.path.join(export_dir, numpy_dir, dataset + '.npy'))
             if not file_existed(np_name):
                 with open(np_name, 'wb') as f:
                     np.save(f, data)
-                # shutil.copy(name, np_name)
                 f.close()
-            print("NP Done", np_name)
+            print("NP Done", np_name, type(data))
 
-        def csv_file_writer(dataset, dict):
+        def csv_file_writer(export_dir, dataset, dict):
             print(COLOR.Blue + ' Dict to CSV...' + COLOR.END)
-            s = dataset + timestr
             csv_dir = "csv"
-            if not os.path.exists(os.path.join(self.script_dir, csv_dir)):
-                os.makedirs(csv_dir)
-            # csv_name_patient = os.path.join(os.path.join(self.script_dir, csv_dir, s + '.csv'))
-            csv_name = os.path.join(os.path.join(self.script_dir, csv_dir, dataset + '.csv'))
+            if not os.path.exists(os.path.join(export_dir, csv_dir)):
+                os.makedirs(os.path.join(export_dir, csv_dir))
+            csv_name = os.path.join(os.path.join(export_dir, csv_dir, dataset + '.csv'))
             print(csv_name)
-            # print(dict.keys())
             with open(csv_name, 'w', newline="") as csv_file_patient:
                 w = csv.writer(csv_file_patient, delimiter=',')
                 w.writerow(dict.keys())
                 w.writerows(zip(*dict.values()))
-                # w.writerows(zip(*dict.values()))
-            # csv_name = os.path.join(os.path.join(self.script_dir, csv_dir, dataset + '.csv'))
-            # shutil.copy(csv_name_patient, csv_name)
             csv_file_patient.close()
             print("CSV Done", csv_name)
 
         print(COLOR.Blue + ' Pars dict...' + COLOR.END)
         __bt = BYTE()
-
         TAGS.CTPI = []
-
         TAGS.dict_CSV = {}
-
-        print(len(self.patient_slices))
+        # print(len(self.patient_slices))
         for i in range(len(self.patient_slices)):
             P = []
             for j in range(len(self.patient_slices[i])):
@@ -301,9 +309,14 @@ class PATIENTS:
 
         CTPI_Image = np.stack(TAGS.CTPI)
         print("-" * 40)
-        print("\tDict:", 'Patients:', CTPI_Image.ndim, 'Shape:', CTPI_Image.shape, "Num of Slices:", len(CTPI_Image))
+        if Rescale != TAGS.Rows[0]:
+            Res = False
+        else:
+            Res = True
+        print("tDict:", 'Patients:', CTPI_Image.ndim, 'Shape:', CTPI_Image.shape, "Slices:", len(CTPI_Image),
+              'Rescale:', Res)
         print("-" * 40)
-        np_file_writer(self.dataset, CTPI_Image)
+
         TAGS.dict_CSV["StudyID"] = TAGS.StudyID
         TAGS.dict_CSV["Patient"] = TAGS.Patient
         TAGS.dict_CSV["Image"] = TAGS.Image
@@ -317,7 +330,59 @@ class PATIENTS:
         TAGS.dict_CSV["SliceLocation"] = TAGS.SliceLocation
         TAGS.dict_CSV["Body_Part"] = TAGS.Body_Part
         self.dict_CSV = TAGS.dict_CSV
-        csv_file_writer(self.dataset, TAGS.dict_CSV)
+        self.slices = CTPI_Image
+        print('export_dir', dir_name)
+        print('dataset', self.dataset)
+        np_file_writer(export_dir=dir_name, dataset=self.dataset, data=self.slices)
+        csv_file_writer(export_dir=dir_name, dataset=self.dataset, dict=self.dict_CSV)
+
+
+    def slice_plot(self, fig_title, Random, dir_name):
+        f = os.path.join(dir_name, "figure")
+        figure_name = os.path.join(f, timestr + '.pdf')
+        self.dir_existed(dir_name=f)
+        def figure_save(dataset):
+            print(COLOR.Blue + ' Safe figure...' + COLOR.END)
+            s = dataset + timestr
+            figure_dir = "figure"
+            if not os.path.exists(os.path.join(self.script_dir, figure_dir)):
+                os.makedirs(figure_dir)
+            figure_fname = os.path.join(os.path.join(self.script_dir, figure_dir, s + '.pdf'))
+            return figure_fname
+
+        if self.slices == []:
+            print(COLOR.Red + "Patient list is empty or corrupted" + COLOR.END)
+            return
+        else:
+            #print("\tDict:", 'Patients:', self.slices.ndim, 'Shape:', self.slices.shape, "Num of Slices:")
+            # w = self.slices.shape[1]
+            # h = self.slices.shape[2]
+            fig = plt.figure(fig_title, figsize=(30, 20), dpi=80)
+            if Random:
+                print('Slices', len(self.slices))
+                for num in range(20):
+                    r = random.randint(0, len(self.slices))
+                    ax = fig.add_subplot(4, 5, num + 1)
+                    s = r, " Slice: " + str(self.dict_CSV["SliceLocation"][r])
+                    ax.set_title(s, fontsize=10, color='red')
+                    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+                    textstr = '\n'.join((
+                        r'$Patient= %s$' % (self.dict_CSV["StudyID"][r],),
+                        r'$BodyPart= %s$' % (self.dict_CSV["Body_Part"][r],),
+                        r'$InstNumber= %d$' % (self.dict_CSV["Instance_Number"][r],),
+                        r'Exposure= %f[mAsec]$' % (self.dict_CSV["Exposure"][r],),
+                        r'$Slice= %s$' % (self.dict_CSV["SliceLocation"][r])))
+                    ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=8,
+                            verticalalignment='top', bbox=props)
+
+                    ax.imshow(self.slices[r], cmap='gray')
+                    ax.set_aspect('equal')
+                #self.dir_existed(dir_name="figure")
+                plt.savefig(figure_save(figure_name))
+
+            else:
+                pass
+            # plt.show()
 
     def coll_dict(self, dataset):
 
@@ -365,68 +430,3 @@ class PATIENTS:
         self.dict_CSV = csv_file_reader(srcipt_dir=self.script_dir, dataset=dataset, dict=self.dict_CSV)
         self.slices = []
         self.slices = np_file_reader(srcipt_dir=self.script_dir, dataset=dataset, data=self.slices)
-
-    def dir_existed(self, dir_name):
-
-        if not os.path.exists(dir_name):
-            os.makedirs(dir_name)
-            print(COLOR.Red + "Directory " + dir_name + " created" + COLOR.END)
-        else:
-            print(COLOR.Blue + "Directory " + dir_name + " already created" + COLOR.END)
-
-    def file_existed(self, filename):
-        try:
-            f = open(filename)
-            print(COLOR.Green + filename + " created at " + COLOR.END + time.ctime(os.path.getctime(filename)))
-            f.close()
-            return 1
-        except IOError:
-            print(COLOR.Red + "File not accessible" + COLOR.END)
-            return 0
-
-    def patient_Info(self):
-        self.NumP = self.slices_size()
-        return False, True
-
-    def slice_plot(self, fig_title, Random):
-        def figure_save(dataset):
-            print(COLOR.Blue + ' Safe figure...' + COLOR.END)
-            s = dataset + timestr
-            figure_dir = "figure"
-            if not os.path.exists(os.path.join(self.script_dir, figure_dir)):
-                os.makedirs(figure_dir)
-            figure_fname = os.path.join(os.path.join(self.script_dir, figure_dir, s + '.pdf'))
-            return figure_fname
-
-        if self.slices == []:
-            print(COLOR.Red + "Patient list is empty or corrupted" + COLOR.END)
-            return
-        else:
-            print("\tDict:", 'Patients:', self.slices.ndim, 'Shape:', self.slices.shape, "Num of Slices:")
-            # w = self.slices.shape[1]
-            # h = self.slices.shape[2]
-            fig = plt.figure(fig_title, figsize=(30, 20), dpi=80)
-            if Random:
-                for num in range(20):
-                    r = random.randint(0, len(self.slices))
-                    ax = fig.add_subplot(4, 5, num + 1)
-                    s = r, " Slice: " + str(self.dict_CSV["SliceLocation"][r])
-                    ax.set_title(s, fontsize=10, color='red')
-                    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-                    textstr = '\n'.join((
-                        r'$Patient= %s$' % (self.dict_CSV["StudyID"][r],),
-                        r'$BodyPart= %s$' % (self.dict_CSV["Body_Part"][r],),
-                        r'$InstNumber= %d$' % (self.dict_CSV["Instance_Number"][r],),
-                        r'Exposure= %f[mAsec]$' % (self.dict_CSV["Exposure"][r],),
-                        r'$Slice= %s$' % (self.dict_CSV["SliceLocation"][r])))
-                    ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=8,
-                            verticalalignment='top', bbox=props)
-
-                    ax.imshow(self.slices[r], cmap='gray')
-                    ax.set_aspect('equal')
-                self.dir_existed(dir_name="figure")
-                plt.savefig(figure_save(self.dataset))
-
-            else:
-                pass
-            # plt.show()
