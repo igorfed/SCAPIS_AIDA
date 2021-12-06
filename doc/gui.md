@@ -10,7 +10,8 @@ The first working implementation of the tool is possible just naive command line
 | ``` python main.py -input "d:\Scapis\Data1" ``` | Run main.py with user GUI in console |
 | ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT"``` | import selected *dataset* from *data_dir* and export into the *out* folder|
 | ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -r 256``` | import selected *dataset* from *data_dir*, resize and export into the *out* folder|
-| ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -p ``` | import selected *dataset* from *data_dir* export into the *out* folder and plot random slices into pdf|
+| ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -plot ``` | import selected *dataset* from *data_dir* export into the *out* folder and plot random slices into pdf|
+| ``` python main.py -gan_path "d:\Scapis\Data" -n 50 ``` | sellect gan path to the dataset and number of images to generate|
 
 
 

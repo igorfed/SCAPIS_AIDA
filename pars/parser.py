@@ -45,6 +45,17 @@ class ARG_PARSE():
                             type=int,
                             help='Setup resolution to rescale')
 
+        parser.add_argument("-n", "--n",
+                            required=False,
+                            type=int,
+                            help='number of images to generate using PCGAN')
+
+        parser.add_argument("-gan_path", "--gan_path",
+                            required=False,
+                            type=str,
+                            help='Path to the GAN results folder')
+
+
         parser.add_argument("-plot", "--plot",  action='store_true', required=False, help='Plot sample')
 
         args = parser.parse_args()

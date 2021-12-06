@@ -33,9 +33,9 @@ def file_existed(filename):
 class PATIENTS:
 
     def __init__(self, args):
-        for key, value in args._get_kwargs():
+        #for key, value in args._get_kwargs():
             # if value is not None:
-            print("{0} = {1}".format(key, value))
+        #    print("{0} = {1}".format(key, value))
 
         self.data_dir = args.input
         self.dataset = args.dataset
@@ -69,6 +69,7 @@ class PATIENTS:
             if self.plot is not None:
                 if self.plot:
                     self.slice_plot(fig_title='Random source plot', Random=True, dir_name=self.export_dir)
+            quit()
 
     def list_dir2dict(self, data_dir, dataset):
         print('data_dir', data_dir)

@@ -1,9 +1,11 @@
 import os
 from com.color import COLOR
 from collections import namedtuple
-
+import numpy as np
 import train as train
-
+import misc as misc
+import config as config
+import tfutil as tfutil
 
 class MENU:
     def __init__(self, __pnt, args, path):
@@ -19,6 +21,12 @@ class MENU:
         self.export_dir = args.out
         self.plot = args.plot  # do you want top plot
         self.resolution = args.r
+        self.gan_path = args.gan_path
+        self.num = args.n
+        if self.gan_path is not None:
+            self.option_generate_pseudonymized_data()
+            quit()
+
         print('abspath:     ', path)
         #print('abs dirname: ', os.path.dirname(os.path.abspath(__file__)))
         self.nested_command = {
@@ -246,20 +254,25 @@ class MENU:
             pass
 
     def option_generate_pseudonymized_data(self):
-        num = self.ask_user2generateNumber(N=1000)
-        train.main()
+        if self.num is None:
+            num = self.ask_user2generateNumber(N=1000)
+        else:
+            num = self.num
+        misc.init_output_logging()
+        np.random.seed(config.random_seed)
+        tfutil.init_tf(config.tf_config)
+        print('Running %s()...of %s ....%s images' % (config.train['func'],config.train['run_id'], config.train['num_pngs']))
 
-    #        misc.init_output_logging()
-    #       np.random.seed(config.random_seed)
+        if self.gan_path is None:
+            config.result_dir = os.path.join(self.path, 'pcgan/results')
+        else:
+            config.result_dir = self.gan_path
 
-    #      tfutil.init_tf(config.tf_config)
-    # print('Running %s()...of %s ....%s images' % (config.train['func'],config.train['run_id'], config.train['num_pngs']))
 
-    #     num_gpus = 1;
-    #    desc = 'camelyon-fake-images'
-    #   tfutil.call_func_by_name(
-    #      **config.EasyDict(func='pcgan.util_scripts.generate_fake_images', run_id='camelyon', num_pngs=int(num)))
-    # print('Exiting...')
+        #train.main()
+
+        tfutil.call_func_by_name(**config.EasyDict(func='util_scripts.generate_fake_images', run_id='camelyon', num_pngs=int(num)))
+        print('Exiting...')
 
     def ui_selection(self):
 
