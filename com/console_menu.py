@@ -154,7 +154,7 @@ class MENU:
         while True:
 
             numImages = input(COLOR.Green + "\t\tEnter number of images to generate in range [0,..., {}]: ".format(
-                1000 - 1) + COLOR.END)
+                N - 1) + COLOR.END)
 
             if numImages.isdigit() and (int(numImages) >= 0 and int(numImages) < N):
 
