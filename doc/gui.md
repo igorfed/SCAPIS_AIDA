@@ -11,30 +11,35 @@ The first working implementation of the tool is possible just naive command line
 | ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT"``` | import selected *dataset* from *data_dir* and export into the *out* folder|
 | ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -r 256``` | import selected *dataset* from *data_dir*, resize and export into the *out* folder|
 | ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -plot ``` | import selected *dataset* from *data_dir* export into the *out* folder and plot random slices into pdf|
-| ``` python main.py -gan_path "d:\Scapis\Data" -n 50 ``` | sellect gan path to the dataset and number of images to generate|
+| ``` python main.py -gan_path "d:\Scapis\Data" -n 50 ``` | sellect gan path to the dataset with *camelion* and number of images to generate*|
+
 
 
 
 1. Get help ```python main.py -h```
 
 
-    usage: main.py [-h] [-data_dir DATA_DIR] [-dataset DATASET] [-im_dir IM_DIR]
-               [-ex_dir EX_DIR] [-res RES]
+usage: main.py [-h] [-input INPUT] [-dataset DATASET] [-out OUT] [-r R] [-n N]
+               [-gan_path GAN_PATH] [-plot]
 
     Scapis. This is an updatable software platform to integrate pseudo anonymized
-    data and run sellected GAN to generate anonimized medical images
+    data and run selected GAN to generate medical images
 
     optional arguments:
-    -h,                     --help      show this help message and exit
-    -data_dir   DATA_DIR,   --data_dir  DATA_DIR
-                                        Path to pseudoanonimized dataset
-    -dataset    DATASET,    --dataset   DATASET
-                                        Type of the dataset (drli / ctpi / scapis )
-    -im_dir     IM_DIR,     --im_dir    IM_DIR
-                                        Import directory
-    -ex_dir     EX_DIR,     --ex_dir    EX_DIR
-                                        Export directory
-    -res        RES,        --res RES   Resolution
+    -h,                 --help            
+                        show this help message and exit
+    -input INPUT,       --input INPUT
+                        Path to pseudoanonimized dataset
+    -dataset DATASET,   --dataset DATASET
+                        Type of the dataset
+    -out OUT,           --out OUT   
+                        Import directory
+    -r R,               --r R           
+                        Setup resolution to rescale
+    -n N,               --n N           
+                        number of images to generate using PCGAN
+    -gan_path GAN_PATH, --gan_path GAN_PATH
+                        Path to the
 
 
 
