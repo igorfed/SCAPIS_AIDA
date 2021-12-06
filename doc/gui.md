@@ -4,6 +4,8 @@
 The first working implementation of the tool is possible just naive command line, reading parameters from some parameters script file or directly from the command line.
 >ATTENTION. The final interface will have changes depending on the accumulated experience of users, recommendations and additional functionality.
 
+### to Run without menu
+
 | Command | Description |
 | ------- | ----------- |
 | ```python main.py -h / --help``` | ger help of the arguments |
@@ -11,10 +13,10 @@ The first working implementation of the tool is possible just naive command line
 | ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT"``` | import selected *dataset* from *data_dir* and export into the *out* folder|
 | ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -r 256``` | import selected *dataset* from *data_dir*, resize and export into the *out* folder|
 | ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -plot ``` | import selected *dataset* from *data_dir* export into the *out* folder and plot random slices into pdf|
-| ``` python main.py -gan_path "d:\Scapis\Data" -n 50 ``` | sellect gan path to the dataset with *camelion* and number of images to generate*|
+| ``` python main.py -gan_path "d:\Scapis\Data" -n 50 ``` | sellect gan path to the dataset with *camelion* and number of images to generate </br> In *gan_path* must be located pretrained *camelion* data|
 
 
-
+### MAIN GUI
 
 1. Get help ```python main.py -h```
 
@@ -151,7 +153,7 @@ To keep original scale press ENTER, or [Q] to go back to the main menu.
 >Note. Others dataset characteristics like:
 > Acquisition_Number, Patient Name, Pationt Sex, Age, StudyDescription, TransferSyntaxUID, MediaStorageSOPClassUID etc, are loaded into the dictionary but not saved into the annotation. Becouse, this informations are not so important to train NN for now.
 
-### Load Data into the model
+2.2 Import Pseudonymized Data
 
 To load converted dataset from the binary format for following preprocessing press 2.
 
@@ -173,36 +175,37 @@ To load converted dataset from the binary format for following preprocessing pre
     ----------------------------------------
 The tool will check the availability of annotation and image data and load them into memory if they exist.
     
-    Choose your option: 2
-	    Do you want to load [drli,ctpa,scapis] dataset ? Choose- [0..2]: 1
-    ctpa
-    CSV to Dict...
-    Unable to load "E:\Liu_projects\SCAPIS_AIDA\csv\ctpa.csv".  Check if its exist. 
-    Numpy to Dict...
-    Unable to load "E:\Liu_projects\SCAPIS_AIDA\np\ctpa.npy".  Check that it exists. 
 
-### Show Slices Info
-
->Note: This option has been removed for now. Since many people have said that this is not necessary as it duplicates the annotation.
-
-### Plot Random Slices
+2.3. Sample Plot Pseudonymized Data
 
 This is an additional option, which help user to plot and save figure as pdf into the project's folder. To run it press 3.
 
-| **[Castomized plot](../Customed_Plot.pdf)**
+| **[Castomized plot](../figure/ctpa_20211130_184903.pdf)**
 
-### To plot Slices as 3D shape
+2.4. Back
 
->Note: This option has been removed for now. Since that this is a console tool.
- 
-### Generate Images by PCGAN
+To return to the main menu press *4*.
 
-To generate annonimized images using pretrained GAN choose option 7 and sellect how many images to generate.
->Note: The number of generated images is currently limited to 1000.
+
+3. Generate Pseudonymized data
+
+To generate Pseudonymized images using pretrained GAN choose *1* in main menu and *0* in submenu.
+
+----------------------------------------
+	[+]		Pseudonymization
+	[-]		Generate Pseudonymized data
+		[0]	Generate Pseudonymized data
+		[1]	Sample Plot
+		[2]	Back
+	[+]		Exit
+----------------------------------------
+	Choose your option [0..2] :
+
+>Note: The number of generated images is currently limited to 10000.
 
     ----------------------------------------
-    Choose your option: 7
-		Enter number of images to generate in range [0,..., 999]: 200
+    Choose your option: 0
+		Enter number of images to generate in range [0,..., 9999]: 200
 
 >Note: It is important to install tf version '1.15.0'. If its not corresponding than the tool require some magic work to make generation without any critical error.
 
@@ -219,6 +222,7 @@ To generate annonimized images using pretrained GAN choose option 7 and sellect 
     Exiting...
 
 The generated images whould be located incide the *results* in the automatically generated folder. 
+>Note. ATTENTION. By default in User GUI all images will save into the project folder in */pcgan/results*
 
-![](../results/000-camelyon-fake-images/camelyon-network-final-000000.png)
+![](../pcgan/results/000-camelyon-fake-images/camelyon-network-final-000001.png)
 

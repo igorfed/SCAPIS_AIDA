@@ -255,7 +255,7 @@ class MENU:
 
     def option_generate_pseudonymized_data(self):
         if self.num is None:
-            num = self.ask_user2generateNumber(N=1000)
+            num = self.ask_user2generateNumber(N=10000)
         else:
             num = self.num
         misc.init_output_logging()
