@@ -9,7 +9,7 @@ class ARG_PARSE():
     def __init__(self):
 
         if os.name == 'nt':
-            self.data_dir = 'D:/Scapis/Data1'
+            self.data_dir = 'D:/Scapis/Data'
         else:
             self.data_dir = '/media/igofed/DATA/SCAPIS_Processed_Data'
 

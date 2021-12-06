@@ -43,63 +43,67 @@ usage: main.py [-h] [-input INPUT] [-dataset DATASET] [-out OUT] [-r R] [-n N]
 
 
 
-2. Run in Console with User Menu ``` python main.py -data_dir [path to pseudoanonimized data] ```
-
-### Load Data
-The first argument **data_dir** is the root directory with the source files. The second **ctpi** is the name of data with which plan to work. 
+2. Run in Console with User Menu ```python main.py -input [path to pseudoanonimized data] ``` <br> 
+The first argument **input** is the root directory with the source files.  
 
 ----------------------------------------
-	[0]	Download DCOM images from [drli,ctpa,scapis] into the Dictionary and create JSON:
-	[1]	Save Dictionary into Numpy and CSV:
-	[2]	Load Dictionary from Numpy and CSV:
-	[3]	Plot random Slices:
-	[4]	Show slices Info:
-	[5]	Hounsfield Units (HU):
-	[6]	OpenGL show in 3D:
-	[7]	Generate Images by PCGAN:
-	[8]	Exit:
+        [0]             Pseudonymization
+        [1]             Generate Pseudonymized data
+        [2]             Exit
 ----------------------------------------
-	Choose your option: 
+        Choose your option [0..2] :
 
-If originally any binary and annotated data were not generated than is highly recommended to start with downloading existing slices as DICOM images from the selected directory.
-To do this the user must press 0 in the command line.  and Choose the a desired dataset from the suggested lists, like in the example.
+If originally any binary and annotated data were not generated than is highly recommended to start with downloading existing slices as DICOM images from the selected *input* directory.
+To do this the user must press 0 in the command line and choose a desired dataset from the suggested lists, like in the example.
 
-    Choose your option: 0
-	    Do you want to load [drli,ctpa,scapis] ? Choose- [0..2]: 0
->Note: The script performs a recursive search for DICOM file. The directory structure is preserved as a result.
+----------------------------------------
+        [-]             Pseudonymization
+                [0]     Import Data
+                [1]     Export Pseudonymized Data ->
+                [2]     Import Pseudonymized Data <-
+                [3]     Sample Plot Pseudonymized Data
+                [4]     Back
+        [+]             Generate Pseudonymized data
+        [+]             Exit
+----------------------------------------
+        Choose your option [0..4] :
+
+2.1. Import Pseudonymized Data </br>
+Select *0* in option list and choose one of the available dataset in the folder, or press *Q* to exit. 
+
+        Choose your option [0..4] : 0
+        ['ctpa___', 'drli', 'scapis']
+        Do you want to load [ctpa___,drli,scapis] ? Choose- [0..2], , Or press [Q] to exit: 
 
     Patient: 0
-	    Image 0 slices 704
-		Image 1 slices 1
-		Image 2 slices 1
+		Image 0 slices 459
 	Patient: 1
-		Image 0 slices 960
-		Image 1 slices 1
-		Image 2 slices 1
-	Patient: 2
-		Image 0 slices 793
-    ....
-    Patient: 9
-		Image 0 slices 938
-		Image 1 slices 1
-		Image 2 slices 1
-    Patient Dict done
-    Directory json already created
->Note: This structure saved into the text file in *Json* format located in **json/** project's folder.
+	    ...
+    ...
+	Patient: n
+		Image 0 slices 401
+>Note: The script performs a recursive search for DICOM file.
+
+User will be informed, if datasets not existed in *input* folder.
+	
+    Import Data not found in folder:	D:/Scapis/Data
+
+>Note: The structure of the dataset will saved into the text file in *Json* format located in **json/** project's folder. </br>
+> This will help to reconstruct 3D dataset from 2D, if necessary.
  ```python
-patient_dict[i]                         # is a number of patient in the dataset 
-patient_dict[i]["id"]                   # is a patient ID (patient name) in the dataset
-patient_dict[i]["path"]                 # is the full path to the patient's images
-patient_dict[i]["image"]           # is a sorted number of images
-patient_dict[i]["image"][J]        # is a number of slices in the images sorted by **Instance_Number**
+    patient_dict[i]             # is a number of patient in the dataset 
+    patient_dict[i]["id"]       # is a patient ID (patient name) in the dataset
+    patient_dict[i]["path"]     # is the full path to the patient's images
+    patient_dict[i]["image"]    # is a sorted number of images
+    patient_dict[i]["image"][J] # is a number of slices in the images sorted by **Instance_Number**
  ```
->Note: This file will created or modified as the following.
+>Note: This file will created or modified in root project folder as the following.
 > 
-    E:\Liu_projects\SCAPIS_AIDA\json\drli_info.json created at Mon Nov 15 13:04:55 2021
+    json\drli_info.json created at Mon Nov 15 13:04:55 2021
 >Note: When ready, using **pidicom** library will load the dicom structure, a recursive search for files in the directory is carried out according to the recorded structure. 
 > 
  ```python
-patient_slices[i].append([pydicom.dcmread(patients_path[-1] + '/' + s) for s in l])
+    patient_slices[i].append([pydicom.dcmread(patients_path[-1] + '/' + s) for s in l])
 ```
     Patient Dict check start
     Patient size 10 Patient 0 Image 0 getSlices 704
@@ -111,28 +115,23 @@ patient_slices[i].append([pydicom.dcmread(patients_path[-1] + '/' + s) for s in 
     Patient size 10 Patient 9 Image 1 getSlices 1
     Patient size 10 Patient 9 Image 2 getSlices 1
     Patient Dict check done
->Note: To show slices info type 4
-> ...
-> ...
-### Prepare and convert Data
 
-To use chosen dataset in training process of the selected GAN need to transform data into the binary format and extract all useful information into the annotation file by chosen the option 1.
-Unfortinatelly, the use of GAN not supporting the initial resolution of the dataset for now. So, to user will be suggest to rescale the initial dataset into 2, 4, or 8 times by choosing 64 meens (64x64), 128 (128x128)or 256(256x256) image resolution.  
+2.2 Export Pseudonymized Data
+
+To use the selected dataset in the training process of the selected GAN its necessary to convert the data to binary format and extract all the useful information into the annotation file by chosen the option *1*.
+Unfortinatelly, the use of GAN not supporting the initial resolution of the dataset for now. So, to user will be suggested to rescale the original dataset into 2, 4, or 8 times by choosing 64 meens (64x64), 128 (128x128)or 256(256x256) image resolution.   </br>
+To keep original scale press ENTER, or [Q] to go back to the main menu.
      
-    Choose your option: 1
-	    Do you want to RESCALE source images? Choose- [64, 128, 256]: 256
-	    Rescale 256
-    Pars dict...
+    Choose your option [0..4] :1
+	    Do you want to RESCALE source images? Choose- [64, 128, 256], If not, press ENTER, or [Q] to exit
+	    Rescale 512    Pars dict...
     10
     3 (704, 256, 256) 704 46137344
 
->Note: All data slices staks togerther side by side and make a single **.npy** binary file in np project's folder.
+>Note: All data slices sticks together side by side and make a single **.npy** binary file in the default *np* project's folder.
  
     Dict: Patients: 3 Shape: (8500, 256, 256) Num of Slices: 8500
->Note: At the same time the annotation file with all necessary information is saved or modified in two **.csv** files, like in the following example:
-
-![img.png](img.png)
-
+>Note: At the same time the annotation file with all necessary tags information is saved or modified in **.csv** file with the same name, like in the following example:
 
 | Attributes | Tags,hex | Group, hex| Description|
 | ------- | ------- | ------- |------- |
