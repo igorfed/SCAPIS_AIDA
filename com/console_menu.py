@@ -2,10 +2,7 @@ import os
 from com.color import COLOR
 from collections import namedtuple
 import numpy as np
-import train as train
-import misc as misc
-import config as config
-import tfutil as tfutil
+import sys
 
 class MENU:
     def __init__(self, __pnt, args, path):
@@ -258,8 +255,13 @@ class MENU:
             num = self.ask_user2generateNumber(N=10000)
         else:
             num = self.num
+
+
+        import misc
         misc.init_output_logging()
+        import config
         np.random.seed(config.random_seed)
+        import tfutil
         tfutil.init_tf(config.tf_config)
         print('Running %s()...of %s ....%s images' % (config.train['func'],config.train['run_id'], config.train['num_pngs']))
 

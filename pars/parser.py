@@ -1,10 +1,9 @@
 import argparse
-import sys
-import com.color as c
+import color as c
 import os
 
 
-class ARG_PARSE():
+class ARG_PARSE:
 
     def __init__(self):
 

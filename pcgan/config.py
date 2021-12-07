@@ -19,7 +19,8 @@ class EasyDict(dict):
 # Paths.
 
 data_dir = 'datasets'
-result_dir = 'c:\LiU\SCAPIS_AIDA/pcgan/results'
+#result_dir = '/pcgan/results'
+result_dir = '/results'
 
 #----------------------------------------------------------------------------
 # TensorFlow options.

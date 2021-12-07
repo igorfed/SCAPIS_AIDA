@@ -7,12 +7,12 @@ __author__ = "Igor F"
 __copyright__ = "free"
 __version__ = "1.0.1"
 
-from pars.parser import ARG_PARSE
-#from com.patient import PATIENTS
-from com.patients import PATIENTS
-from com.console_menu import MENU
 import os
-path = os.path.abspath(__file__)
+
+from patients import PATIENTS
+from console_menu import MENU
+from pars.parser import ARG_PARSE
+
 
 def main(pnt, args):
 
@@ -21,6 +21,10 @@ def main(pnt, args):
 
 
 if __name__ == '__main__':
+    import sys
+
+    for p in sys.path:
+        print(p)
 
     __args = ARG_PARSE()
     args = __args.argParse()

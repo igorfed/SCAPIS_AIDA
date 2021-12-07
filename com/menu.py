@@ -1,13 +1,10 @@
 from com.color import COLOR
 from collections import namedtuple
 #from SCAPIS_AIDA.com.patient import PATIENTS
-import misc
-import config
-import  tfutil
-
+from pcgan import misc, config, tfutil
 
 import numpy as np
-from pars.parser import STR
+#from pars.parser import STR
 
 
 class MENU:
