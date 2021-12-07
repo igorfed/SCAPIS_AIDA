@@ -21,11 +21,6 @@ def main(pnt, args):
 
 
 if __name__ == '__main__':
-    import sys
-
-    for p in sys.path:
-        print(p)
-
     __args = ARG_PARSE()
     args = __args.argParse()
     __pnt = PATIENTS(args)
