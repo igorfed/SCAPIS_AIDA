@@ -256,7 +256,7 @@ class MENU:
         else:
             num = self.num
 
-
+        sys.path.append('pcgan')
         import misc
         misc.init_output_logging()
         import config

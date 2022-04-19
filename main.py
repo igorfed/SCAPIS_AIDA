@@ -9,8 +9,8 @@ __version__ = "1.0.1"
 
 import os
 
-from patients import PATIENTS
-from console_menu import MENU
+from com.patients import PATIENTS
+from com.console_menu import MENU
 from pars.parser import ARG_PARSE
 
 

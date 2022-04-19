@@ -1,5 +1,5 @@
 import argparse
-import color as c
+import com.color as c
 import os
 
 
