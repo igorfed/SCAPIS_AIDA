@@ -15,4 +15,5 @@ dependencies:
   - six~=1.16.0
   - pillow~=8.4.0
   - numpy=1.22.3
+  - scikit-image
 
