@@ -74,7 +74,7 @@ class PATIENTS:
     def list_dir2dict(self, data_dir, dataset):
         print('data_dir', data_dir)
         print('dataset', dataset)
-
+        self.dataset = dataset            
         self.slices = []
         self.patients = []
         self.patients_path = []
@@ -156,8 +156,8 @@ class PATIENTS:
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
             print(COLOR.Red + "Directory " + dir_name + " created" + COLOR.END)
-        else:
-            print(COLOR.Blue + "Directory " + dir_name + " already created" + COLOR.END)
+        #else:
+        #    print(COLOR.Blue + "Directory " + dir_name + " already created" + COLOR.END)
 
     def file_existed(self, filename):
         try:
@@ -198,10 +198,26 @@ class PATIENTS:
                 os.makedirs(os.path.join(export_dir, numpy_dir))
 
             np_name = os.path.join(os.path.join(export_dir, numpy_dir, dataset + '.npy'))
+            ### ATTENTION This is a temporal part. Change it to CheckSum analysys
+
             if not file_existed(np_name):
                 with open(np_name, 'wb') as f:
                     np.save(f, data)
-                f.close()
+                    
+                    f.close()
+            else:
+                with open(np_name, 'wb') as f:
+                    np.save(f, data)
+                    f.close()
+
+            #        print("shell close", run_shell_command(['md5sum', '-b', np_name]) )
+            #print("shell", run_shell_command(['md5sum', '-b', np_name]) )
+
+          
+
+
+
+
             print("NP Done", np_name, type(data))
 
         def csv_file_writer(export_dir, dataset, dict):
@@ -306,7 +322,7 @@ class PATIENTS:
 
             V_Image = np.stack(P)
             TAGS.CTPI = TAGS.CTPI + P
-            print(V_Image.ndim, V_Image.shape, len(V_Image), np.size(V_Image))
+            print(f"Image Shape{V_Image.shape}, Slices: {len(V_Image)}, Size: {np.size(V_Image)} [pixels], {np.round(V_Image.nbytes*1E-6, 1)} [MB]")
 
         CTPI_Image = np.stack(TAGS.CTPI)
         print("-" * 40)
@@ -314,7 +330,7 @@ class PATIENTS:
             Res = False
         else:
             Res = True
-        print("tDict:", 'Patients:', CTPI_Image.ndim, 'Shape:', CTPI_Image.shape, "Slices:", len(CTPI_Image),
+        print("Dict:", 'Patients:', CTPI_Image.ndim, 'Shape:', CTPI_Image.shape, "Slices:", len(CTPI_Image),
               'Rescale:', Res)
         print("-" * 40)
 

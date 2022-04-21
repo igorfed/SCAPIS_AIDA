@@ -11,7 +11,7 @@ class MENU:
         Option = namedtuple('Option', 'label')
         # s = ','.join(STR)
         self.command = {0: Option("Pseudonymization"),
-                        1: Option("Generate Pseudonymized data"),
+                        1: Option("Generate Annonymized data"),
                         2: Option("Exit")}
         self.data_dir = args.input
         self.dataset = args.dataset
@@ -33,7 +33,7 @@ class MENU:
             3: Option("Sample Plot Pseudonymized Data"),
             4: Option("Back")}
         self.nested_command_1 = {
-            0: Option("Generate Pseudonymized data"),
+            0: Option("Generate Annonymized data"),
             1: Option("Sample Plot"),
             2: Option("Back")}
 
@@ -182,7 +182,20 @@ class MENU:
                 print(COLOR.Blue + "\t\t[{0}]\t{1}".format(option, self.nested_command_1[option].label) + COLOR.END)
 
     def ask_user_to_chose_import_dataset(self):
-        [print(f.path) for f in os.scandir('np') if f.is_file()]
+        #[print(f.path) for f in os.scandir('np') if f.is_file()]
+        ## Check if np folder is is existed
+        def check_np():
+            if not os.path.exists('np'):
+                print(COLOR.Red + 'np' + " is not existed" + COLOR.END)    
+                return False
+            else:
+                return True
+
+        if check_np() ==False:
+            print(COLOR.Red + "\tImport Data not found in [np] folder:\t" + self.__pnt.data_dir + COLOR.END)
+            return False
+        #    print(c.COLOR.Red + args.dataset + " is not existed" + c.COLOR.END)
+        # sys.exit(0)
         STR = [os.path.basename(f.path.replace("\\", "/")).split('.')[0] for f in os.scandir('np') if f.is_file()]
         # os.path.basename(f.path.replace("\\", "/"))
         print(STR)
@@ -221,6 +234,8 @@ class MENU:
         if s == False:
             return False
         else:
+            #print("----------------", self.__pnt.data_dir, s)
+            self.dataset = s
             self.__pnt.list_dir2dict(data_dir=self.__pnt.data_dir, dataset=s)
             return True
 
@@ -232,6 +247,7 @@ class MENU:
         else:
             rescale = self.ask_user_to_rescale()
             print('\tRescale ' + str(rescale))
+            #print("self.path", self.path)
             self.__pnt.numpy_writer(Rescale=rescale, dir_name=self.path)
 
     def option_import_pseudonymized_data(self):
