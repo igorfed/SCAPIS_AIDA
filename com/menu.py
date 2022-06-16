@@ -1,7 +1,7 @@
 from com.color import COLOR
 from collections import namedtuple
 #from SCAPIS_AIDA.com.patient import PATIENTS
-from pcgan import misc, config, tfutil
+#from pcgan import misc, config, tfutil
 
 import numpy as np
 #from pars.parser import STR

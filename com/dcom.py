@@ -1,6 +1,7 @@
 from com.color import COLOR
 import numpy as np
-
+import pydicom
+from pydicom.dataset import FileDataset, FileMetaDataset
 
 class DCM:
     # DICOM File Meta Information
@@ -180,6 +181,10 @@ class TAGS:
     StudyDescription = []
     TransferSyntaxUID = []
     MediaStorageSOPClassUID = []
+    MediaStorageSOPInstanceUID = []
+    BitsAllocated = []
+    BitsStored = []
+    HighBit = []
     dict_CSV = {}
 
 
@@ -195,13 +200,77 @@ class BYTE(DCM):
     def byte2Dec(byte):
         return int.from_bytes(byte, byteorder='big', signed=False)
 
-# __bt = BYTE()
-# print(DCM.META)
-# print(DCM.GROUP_LENGTH_INF)
-# a = __bt.byte2concat(DCM.META,DCM.GROUP_LENGTH_INF)
-# print(a)
-# print(a, type(a))
-# b = __bt.byte2Dex(a)
-# print(b, type(b))
-# print(__bt.byte2Dex(a))
-# print('done')
+
+def write_dicom(pixel_array, filename, itemnumber = 0, PhotometricInterpretation = 'MONOCHROME2'):
+    # Create some temporary filenames
+    from pydicom.dataset import FileDataset, FileMetaDataset
+    from pydicom.uid import UID
+    def time_get():
+        dt = datetime.datetime.now()
+        time = dt.strftime('%Y%m%d')
+        timeStr = dt.strftime('%H%M%S.%f')  # long format with micro seconds
+        return time
+    
+    #file_meta = FileMetaDataset()
+    #file_meta.FileMetaInformationGroupLength = 224
+    #file_meta.MediaStorageSOPClassUID = UID('1.2.752.24.10.1.3246021228.1232722830.1394592702.2170053379')
+    #file_meta.MediaStorageSOPInstanceUID = "Explicit VR Little Endian"
+    #file_meta.ImplementationClassUID = UID("1.3.6.1.4.1.9590.100.1.3.100.7.1")
+    #file_meta.ImplementationVersionName = 'PYDICOM-CREATION'
+    #file_meta.SourceApplicationEntityTitle = 'PYCHARM'    
+    
+    #ds = FileDataset(filename, {}, file_meta=file_meta, preamble=b"\0" * 128)
+    #ds.SpecificCharacterSet = 'ISO_IR 100'
+    #ds.ImageType = ['ORIGINAL', 'PRIMARY', 'AXIAL', 'CT_SOM5 SEQ']
+    #ds.SOPClassUID = 'CT Image Storage'
+    #ds.SOPClassInstanceUID = UID('1.2.752.24.10.1.3246021228.1232722830.1394592702.2170053379')
+    #ds.StudyDate = time_get()
+    #ds.SeriesDate = time_get()
+    #ds.AcquisitionDate = time_get()
+    #ds.ContentDate = time_get()
+    #ds.AccessionNumber = str(itemnumber)  #9497992
+    #ds.Modality = 'CT'
+    #ds.Manufacturer = 'Linköping University'
+    #ds.StudyDescription = 'Image Annonimization'
+
+    #ds.PatientName = "Anonimyzed"
+    #ds.PatientID = "123456"
+    #ds.PatientSex = "F"
+    #ds.PatientIdentityRemoved = 'Yes'
+    #ds.BodyPart = "StyleGan3"
+    #ds.KVP = '120.0'
+
+    #ds.SliceThickness = '5.0'
+    #ds.DataCollectionDiameter = '500.0'
+    #ds.ReconstructionDiameter = '500.0'
+
+
+    #ds.AcquisitionNumber = 1
+    #ds.InstanceNumber = 1
+    #ds.SamplesPerPixel = 1
+    #ds.PhotometricInterpretation = PhotometricInterpretation
+
+    #ds.Rows = 512
+    #ds.Columns = 512
+    
+    #ds.BitsAllocated = 16
+    #ds.BitsStored = 16
+    #ds.HighBit = ds.BitsStored - 1
+    #ds.PixelSpacing = ['0.9765625', '0.9765625']
+    #ds.PixelRepresentation = 0
+    #ds.SmallestImagePixelValue =0
+    #ds.LargestImagePixelValue = 2684
+    #ds.WindowCenter = ['40', '40']
+    #ds.WindowWidth = ['400', '150']
+    #ds.RescaleSlope = '1.0'
+    #ds.RescaleType = 'HU'
+    #ds.ItemNumber = 0
+    #ds.SliceLocation = 0
+    #ds.InstanceNumber = 0
+    
+    if pixel_array.dtype != np.uint16:
+        pixel_array = pixel_array.astype(np.uint16)
+        ds.PixelData = pixel_array.tostring()
+    ds.save_as(filename)
+
+    return filename

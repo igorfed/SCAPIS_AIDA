@@ -3,7 +3,8 @@ from com.color import COLOR
 from collections import namedtuple
 import numpy as np
 import sys
-
+sys.path.append('stylegan3')
+from com.patients import file_existed
 class MENU:
     def __init__(self, __pnt, args, path):
         self.__pnt = __pnt
@@ -15,16 +16,42 @@ class MENU:
                         2: Option("Exit")}
         self.data_dir = args.input
         self.dataset = args.dataset
-        self.export_dir = args.out
+
+        if args.out !=None:
+            self.export_dir = args.out
+        else:
+            self.export_dir = os.path.join(os.path.abspath(os.getcwd()), 'output')
+
+
+        if args.gan_path !=None:
+            self.network = args.gan_path
+        else:
+            self.network = os.path.join(os.path.abspath(os.getcwd()), 'stylegan3/training-runs/scapis-ct/network-final.pkl')
+
         self.plot = args.plot  # do you want top plot
         self.resolution = args.r
-        self.gan_path = args.gan_path
+        
+        if file_existed(self.network):
+            pass
+        else:
+            print(COLOR.Red + "ATTENTION! pkl file is not exists" + COLOR.END)
+            exit()
+
+
+        self.project_folder = os.path.abspath(os.getcwd()) 
+        #outdir = os.path.join(os.path.abspath(os.getcwd()), 'output')
+        
+        
+        
+        
+        
+
         self.num = args.n
-        if self.gan_path is not None:
+        if args.gan_path is not None:
             self.option_generate_pseudonymized_data()
             quit()
 
-        print('abspath:     ', path)
+        #print('abspath:     ', path)
         #print('abs dirname: ', os.path.dirname(os.path.abspath(__file__)))
         self.nested_command = {
             0: Option("Import Data"),
@@ -47,7 +74,7 @@ class MENU:
     def user(option_size):
         try:
             print("-" * 40)
-            out = input(COLOR.Green + "\tChoose your option [0..{0}] :".format(option_size - 1) + COLOR.END)
+            out = input(COLOR.Green + "\tChoose your option [0..{0}] : ".format(option_size - 1) + COLOR.END)
 
         except ValueError:
             print(COLOR.Red + "\tError! This option does not exist" + COLOR.END)
@@ -183,51 +210,59 @@ class MENU:
 
     def ask_user_to_chose_import_dataset(self):
         #[print(f.path) for f in os.scandir('np') if f.is_file()]
+        
         ## Check if np folder is is existed
-        def check_np():
-            if not os.path.exists('np'):
-                print(COLOR.Red + 'np' + " is not existed" + COLOR.END)    
+        #def check_np():
+        #    if os.path.exists('np'):
+        #        print(os.path.exists('np'))
+        #        return True
+
+        #    else:
+        #        print(os.path.exists('np'))
+        ##        print(COLOR.Red + 'np' + " is not existed" + COLOR.END)    
+        #        return False
+
+
+        #if check_np()==False:
+        #    print('self.__pnt.data_dir', self.__pnt.data_dir)
+        #    print(COLOR.Red + "\tImport Data not found in [np] folder" + COLOR.END)
+        #    if self.ask_user_to_import():
+        #        self.option_import_data()
+
+            #return self.option_import_data()
+
+        if os.path.exists('np'):
+            STR = [os.path.basename(f.path.replace("\\", "/")).split('.')[0] for f in os.scandir('np') if f.is_file()]
+            print(STR)
+            if not STR:
+                print(COLOR.Red + "\tImport Data not found in folder:\t" + self.__pnt.data_dir + COLOR.END)
+                return False
+            s = ','.join(STR)
+            if len(STR) == 1:
+                s = "\tDo you want to load [" + s + "] ? Choose- [0], Or press [Q] to exit:"
+            else:
+                s = "\tDo you want to load [" + s + "] ? Choose- [0..{}], Or press [Q] to exit: ".format(len(STR) - 1)
+            check = (input(COLOR.Green + s + COLOR.END))
+            if check.strip().isdigit():
+                try:
+                    if int(check) == 0:
+                        return STR[0]
+                    elif int(check) == 1:
+                        return STR[1]
+                    elif int(check) == 2:
+                        return STR[2]
+                    else:
+                        print(COLOR.Red + '\tInvalid Input. Choose again' + COLOR.END)
+                        return self.ask_user_to_chose_import_dataset()
+                except Exception as error:
+                    print(COLOR.Red + "\tPlease enter valid inputs" + COLOR.END)
+                    print(error)
+                return self.ask_user_to_chose_import_dataset()
+            elif check == 'q' or check == 'Q':
                 return False
             else:
-                return True
-
-        if check_np() ==False:
-            print(COLOR.Red + "\tImport Data not found in [np] folder:\t" + self.__pnt.data_dir + COLOR.END)
-            return False
-        #    print(c.COLOR.Red + args.dataset + " is not existed" + c.COLOR.END)
-        # sys.exit(0)
-        STR = [os.path.basename(f.path.replace("\\", "/")).split('.')[0] for f in os.scandir('np') if f.is_file()]
-        # os.path.basename(f.path.replace("\\", "/"))
-        print(STR)
-        if not STR:
-            print(COLOR.Red + "\tImport Data not found in folder:\t" + self.__pnt.data_dir + COLOR.END)
-            return False
-        s = ','.join(STR)
-        if len(STR) == 1:
-            s = "\tDo you want to load [" + s + "] ? Choose- [0], Or press [Q] to exit:"
-        else:
-            s = "\tDo you want to load [" + s + "] ? Choose- [0..{}], Or press [Q] to exit:".format(len(STR) - 1)
-        check = (input(COLOR.Green + s + COLOR.END))
-        if check.strip().isdigit():
-            try:
-                if int(check) == 0:
-                    return STR[0]
-                elif int(check) == 1:
-                    return STR[1]
-                elif int(check) == 2:
-                    return STR[2]
-                else:
-                    print(COLOR.Red + '\tInvalid Input. Choose again' + COLOR.END)
-                    return self.ask_user_to_chose_import_dataset()
-            except Exception as error:
-                print(COLOR.Red + "\tPlease enter valid inputs" + COLOR.END)
-                print(error)
-            return self.ask_user_to_chose_import_dataset()
-        elif check == 'q' or check == 'Q':
-            return False
-        else:
-            print(COLOR.Red + '\tInvalid Input. Chose again' + COLOR.END)
-            return self.ask_user_to_chose_import_dataset()
+                print(COLOR.Red + '\tInvalid Input. Chose again' + COLOR.END)
+                return self.ask_user_to_chose_import_dataset()
 
     def option_import_data(self):
         s = self.ask_user_to_chose_dataset()
@@ -244,6 +279,10 @@ class MENU:
             print(COLOR.Red + "\tNo  Data to export:\t" + self.__pnt.data_dir + COLOR.END)
             if self.ask_user_to_import():
                 self.option_import_data()
+                rescale = self.ask_user_to_rescale()
+                print('\tRescale ' + str(rescale))
+                #print("self.path", self.path)
+                self.__pnt.numpy_writer(Rescale=rescale, dir_name=self.path)
         else:
             rescale = self.ask_user_to_rescale()
             print('\tRescale ' + str(rescale))
@@ -251,49 +290,73 @@ class MENU:
             self.__pnt.numpy_writer(Rescale=rescale, dir_name=self.path)
 
     def option_import_pseudonymized_data(self):
-        s = self.ask_user_to_chose_import_dataset()
-        if s == False:
-            return False
+        if os.path.exists('np') and os.path.exists('csv'):
+            s = self.ask_user_to_chose_import_dataset()
+            if s == False:
+                return False
+            else:
+                print(s)
+                self.__pnt.coll_dict(dataset=s)
         else:
-            print(s)
-            self.__pnt.coll_dict(dataset=s)
+            if self.ask_user_to_import():
+                self.option_import_data()
 
     def option_sample_plot(self, data_type):
         if data_type == "Pseudonymized":
-            self.__pnt.slice_plot(fig_title='Random source plot', Random=True,dir_name=self.path)
+            if self.__pnt.slices == []:
+                print(COLOR.Red + "Patient list is empty or corrupted" + COLOR.END)
+                self.option_export_data()
+            
+            self.__pnt.slice_plot(fig_title='Random source plot', Random=True, dir_name=self.path)
         elif data_type == "Generated":
             pass
         else:
             pass
 
     def option_generate_pseudonymized_data(self):
+        
         if self.num is None:
             num = self.ask_user2generateNumber(N=10000)
         else:
             num = self.num
 
-        sys.path.append('pcgan')
-        import misc
-        misc.init_output_logging()
-        import config
-        np.random.seed(config.random_seed)
-        import tfutil
-        tfutil.init_tf(config.tf_config)
-        print('Running %s()...of %s ....%s images' % (config.train['func'],config.train['run_id'], config.train['num_pngs']))
+        #project_path = os.path.abspath(os.getcwd()) 
+        #sys.path.append('stylegan3')
+        #path =os.path.join(project_path, 'stylegan3')
+        #project_folder = os.path.abspath(os.getcwd())
+        #outdir = os.path.join(os.path.abspath(os.getcwd()), 'output')
+        #network = os.path.join(os.path.abspath(os.getcwd()), 'stylegan3/training-runs/scapis-ct/network-final.pkl')
+        command = f'python3 stylegan3/gen_images.py --outdir={self.export_dir} --seeds=1-{num} --network={self.network}'
 
-        if self.gan_path is None:
-            config.result_dir = os.path.join(self.path, 'pcgan/results')
-        else:
-            config.result_dir = self.gan_path
+        #command = f'python3 stylegan3/gen_images.py --outdir={outdir} --seeds=1-{num} --network={network}'
+        print(command)
+        print('python3 stylegan3/gen_images.py --outdir=/home/igofed/LiU/SCAPIS_AIDA/output --seeds=1-10 --network=/home/igofed/LiU/SCAPIS_AIDA/stylegan3/training-runs/scapis-ct/network-final.pkl')
+        os.system(command)
+        print('done')
+
+    #    sys.path.append('pcgan')
+    #    import misc
+    #    misc.init_output_logging()
+    #    import config
+    #    np.random.seed(config.random_seed)
+    #    import tfutil
+    #    tfutil.init_tf(config.tf_config)
+    #    print('Running %s()...of %s ....%s images' % (config.train['func'],config.train['run_id'], config.train['num_pngs']))
+
+    #    if self.gan_path is None:
+    #        config.result_dir = os.path.join(self.path, 'pcgan/results')
+    #    else:
+    #        config.result_dir = self.gan_path
 
 
         #train.main()
 
-        tfutil.call_func_by_name(**config.EasyDict(func='util_scripts.generate_fake_images', run_id='camelyon', num_pngs=int(num)))
-        print('Exiting...')
+    #    tfutil.call_func_by_name(**config.EasyDict(func='util_scripts.generate_fake_images', run_id='camelyon', num_pngs=int(num)))
+    #    print('Exiting...')
 
     def ui_selection(self):
 
+        i, j = None, None
         i, j = None, None
         while True:
             self.print_menu(user_choice=i)

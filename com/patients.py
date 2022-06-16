@@ -14,7 +14,7 @@ from com.dcom import TAGS
 import csv
 import time, timeit
 
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 
 timestr = time.strftime("_%Y%m%d_%H%M%S")
 
@@ -247,12 +247,13 @@ class PATIENTS:
                     if __bt.byte2concat(DCM.SOP, DCM.MODALITY) in value:
                         if self.patient_slices[i][j][k].Modality == "CT":
                             P.append(dcm_scale_down(self.patient_slices[i][j][k].pixel_array, Rescale))
+
                             TAGS.Rows.append(self.patient_slices[i][j][k].Rows)
                             TAGS.Columns.append(self.patient_slices[i][j][k].Rows)
                             TAGS.Patient.append(i)
                             TAGS.Image.append(j)
                             TAGS.Slices.append(k)
-
+                            # https://xnat.bmia.nl/REST/services/dicomdump?src=/archive/projects/sandbox/experiments/BMIAXNAT_E69813/scans/6&format=html&requested_screen=DicomScanTable.vm
                             if __bt.byte2concat(b"\x00\x20", b"\x00\x10") in value:
                                 TAGS.StudyID.append(self.patient_slices[i][j][k].StudyID)
                             else:
@@ -314,11 +315,42 @@ class PATIENTS:
                             else:
                                 TAGS.Body_Part.append(None)
 
-                            if k == 0 and (__bt.byte2concat(DCM.META, DCM.META_STORAGE_SOP_INST_UID) in value):
+                            #if k == 0 and (__bt.byte2concat(DCM.META, DCM.META_STORAGE_SOP_INST_UID) in value):
+                            #    TAGS.MediaStorageSOPClassUID.append(
+                            #        self.patient_slices[i][j][k].file_meta.MediaStorageSOPClassUID.name)
+                            #else:
+                            #    TAGS.MediaStorageSOPClassUID.append(None)
+                            #----------------------------#
+                            if k == 0 and (__bt.byte2concat(b"\x00\x02", b"\x00\x02") in value):
                                 TAGS.MediaStorageSOPClassUID.append(
                                     self.patient_slices[i][j][k].file_meta.MediaStorageSOPClassUID.name)
                             else:
                                 TAGS.MediaStorageSOPClassUID.append(None)
+                            #----------------------------#
+                            if k == 0 and (__bt.byte2concat(b"\x00\x02", b"\x00\x03") in value):
+                                TAGS.MediaStorageSOPInstanceUID.append(
+                                    self.patient_slices[i][j][k].file_meta.MediaStorageSOPInstanceUID)
+                            else:
+                                TAGS.MediaStorageSOPInstanceUID.append(None)
+
+                            #--------Bits#
+                            if (__bt.byte2concat(b"\x00\x28", b"\x01\x00") in value):
+                                TAGS.BitsAllocated.append(
+                                    self.patient_slices[i][j][k].BitsAllocated)
+                            else:
+                                TAGS.BitsAllocated.append(None)
+
+                            if (__bt.byte2concat(b"\x00\x28", b"\x01\x01") in value):
+                                TAGS.BitsStored.append(
+                                    self.patient_slices[i][j][k].BitsStored)
+                            else:
+                                TAGS.BitsStored.append(None)
+
+                            if (__bt.byte2concat(b"\x00\x28", b"\x01\x02") in value):
+                                TAGS.HighBit.append(
+                                    self.patient_slices[i][j][k].HighBit)
+                            else:
+                                TAGS.HighBit.append(None)
 
             V_Image = np.stack(P)
             TAGS.CTPI = TAGS.CTPI + P
@@ -326,6 +358,7 @@ class PATIENTS:
 
         CTPI_Image = np.stack(TAGS.CTPI)
         print("-" * 40)
+        print(self.patient_slices[i][j][k])
         if Rescale != TAGS.Rows[0]:
             Res = False
         else:
@@ -333,9 +366,14 @@ class PATIENTS:
         print("Dict:", 'Patients:', CTPI_Image.ndim, 'Shape:', CTPI_Image.shape, "Slices:", len(CTPI_Image),
               'Rescale:', Res)
         print("-" * 40)
-
+        print(f'Test P: min {np.min(P[-1])} max {np.max(P[-1])}')
         TAGS.dict_CSV["StudyID"] = TAGS.StudyID
         TAGS.dict_CSV["Patient"] = TAGS.Patient
+        TAGS.dict_CSV["PatientID"] = TAGS.PatientID
+        TAGS.dict_CSV["PatientSex"] = TAGS.PatientSex
+        TAGS.dict_CSV["PatientAge"] = TAGS.PatientAge
+        TAGS.dict_CSV["StudyDescription"] = TAGS.StudyDescription
+        TAGS.dict_CSV["TransferSyntaxUID"] = TAGS.TransferSyntaxUID
         TAGS.dict_CSV["Image"] = TAGS.Image
         TAGS.dict_CSV["Slices"] = TAGS.Slices
         TAGS.dict_CSV["Exposure"] = TAGS.Exposure
@@ -346,6 +384,15 @@ class PATIENTS:
         TAGS.dict_CSV["Acquisition_Number"] = TAGS.Acquisition_Number
         TAGS.dict_CSV["SliceLocation"] = TAGS.SliceLocation
         TAGS.dict_CSV["Body_Part"] = TAGS.Body_Part
+        TAGS.dict_CSV["MediaStorageSOPClassUID"] = TAGS.MediaStorageSOPClassUID
+        TAGS.dict_CSV["MediaStorageSOPInstanceUID"] = TAGS.MediaStorageSOPInstanceUID
+        TAGS.dict_CSV["BitsAllocated"] = TAGS.BitsAllocated
+        TAGS.dict_CSV["BitsStored"] = TAGS.BitsStored
+        TAGS.dict_CSV["HighBit"] = TAGS.HighBit
+        
+        #TAGS.dict_CSV["ImplementationClassUID"] = TAGS.MediaStorageSOPClassUID
+
+
         self.dict_CSV = TAGS.dict_CSV
         self.slices = CTPI_Image
         print('export_dir', dir_name)
@@ -387,7 +434,7 @@ class PATIENTS:
                         r'$Patient= %s$' % (self.dict_CSV["StudyID"][r],),
                         r'$BodyPart= %s$' % (self.dict_CSV["Body_Part"][r],),
                         r'$InstNumber= %d$' % (self.dict_CSV["Instance_Number"][r],),
-                        r'Exposure= %f[mAsec]$' % (self.dict_CSV["Exposure"][r],),
+                        #r'Exposure= %f[mAsec]$' % (self.dict_CSV["Exposure"][r],),
                         r'$Slice= %s$' % (self.dict_CSV["SliceLocation"][r])))
                     ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=8,
                             verticalalignment='top', bbox=props)
