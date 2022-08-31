@@ -13,6 +13,9 @@ from com.dcom import DCM, DCM_TAG
 from com.dcom import TAGS
 import csv
 import time
+
+
+
 matplotlib.use('Agg')
 
 timestr = time.strftime("_%Y%m%d_%H%M%S")
@@ -22,6 +25,8 @@ timestr = time.strftime("_%Y%m%d_%H%M%S")
 
 
 def file_existed(filename):
+
+
     try:
         f = open(filename)
         print(COLOR.Green + filename + " created" + COLOR.END)

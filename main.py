@@ -5,7 +5,7 @@
 
 __author__ = "Igor F"
 __copyright__ = "free"
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 import os
 

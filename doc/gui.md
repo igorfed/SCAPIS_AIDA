@@ -9,17 +9,15 @@ The first working implementation of the tool is possible just naive command line
 | Command | Description |
 | ------- | ----------- |
 | ```python main.py -h / --help``` | ger help of the arguments |
-| ``` python main.py -input "d:\Scapis\Data1" ``` | Run main.py with user GUI in console |
-| ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT"``` | import selected *dataset* from *data_dir* and export into the *out* folder|
-| ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -r 256``` | import selected *dataset* from *data_dir*, resize and export into the *out* folder|
-| ``` python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -plot ``` | import selected *dataset* from *data_dir* export into the *out* folder and plot random slices into pdf|
-| ``` python main.py -gan_path "d:\Scapis\Data" -n 50 ``` | sellect gan path to the dataset with *camelion* and number of images to generate </br> In *gan_path* must be located pretrained *camelion* data|
-
+| ```python main.py -input /media/igofed/SSD_1T/Scapis/Data``` | Run main.py with user GUI in console |
+| ```python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT"``` | import selected *dataset* from *data_dir* and export into the *out* folder|
+| ```python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -r 256``` | import selected *dataset* from *data_dir*, resize and export into the *out* folder|
+| ```python main.py -input "d:\Scapis\Data1" -dataset ctpa -out "d:\Scapis\OUT" -plot``` | import selected *dataset* from *data_dir* export into the *out* folder and plot random slices into pdf|
+| ```python main.py -gan_path "d:\Scapis\Data" -n 50``` | |
 
 ### MAIN GUI
 
 1. Get help ```python main.py -h```
-
 
 usage: main.py [-h] [-input INPUT] [-dataset DATASET] [-out OUT] [-r R] [-n N]
                [-gan_path GAN_PATH] [-plot]
@@ -43,9 +41,7 @@ usage: main.py [-h] [-input INPUT] [-dataset DATASET] [-out OUT] [-r R] [-n N]
     -gan_path GAN_PATH, --gan_path GAN_PATH
                         Path to the
 
-
-
-2. Run in Console with User Menu ```python main.py -input [path to pseudoanonimized data] ``` <br> 
+2.Run in Console with User Menu ```python main.py -input [path to pseudoanonimized data]```</br>
 The first argument **input** is the root directory with the source files.  
 
 ----------------------------------------
@@ -71,7 +67,7 @@ To do this the user must press 0 in the command line and choose a desired datase
         Choose your option [0..4] :
 
 2.1. Import Pseudonymized Data </br>
-Select *0* in option list and choose one of the available dataset in the folder, or press *Q* to exit. 
+Select *0* in option list and choose one of the available dataset in the folder, or press *Q* to exit.
 
         Choose your option [0..4] : 0
         ['ctpa___', 'drli', 'scapis']
@@ -225,4 +221,3 @@ The generated images whould be located incide the *results* in the automatically
 >Note. ATTENTION. By default in User GUI all images will save into the project folder in */pcgan/results*
 
 ![](../pcgan/results/000-camelyon-fake-images/camelyon-network-final-000001.png)
-
